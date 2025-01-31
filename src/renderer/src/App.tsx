@@ -1,35 +1,30 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
+import { useMemo } from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { CategoriesProvider } from './context/categories'
+import Header from './components/molecules/Header'
+import { Container, Row } from 'react-bootstrap'
+import ScreenView from './components/organisms/ScreenView/ScreenView'
+import Footer from './components/molecules/Footer'
+import ControlView from './components/organisms/ControlView/ControlView'
 
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+  const isScreen = useMemo(
+    () => new URLSearchParams(window.location.search).get('screen') === 'true',
+    []
+  )
 
   return (
-    <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
-      <Versions></Versions>
-    </>
+    <Container fluid className="vh-100 vw-100 px-1 py-1 d-flex flex-column overflow-hidden">
+      <CategoriesProvider>
+        <Row>
+          <Header isScreen={isScreen} />
+        </Row>
+        <Row className="flex-grow-1 d-flex flex-column mx-0">
+          {isScreen ? <ScreenView /> : <ControlView />}
+        </Row>
+        <Row>{isScreen ? null : <Footer />}</Row>
+      </CategoriesProvider>
+    </Container>
   )
 }
-
 export default App

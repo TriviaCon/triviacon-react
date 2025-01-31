@@ -1,0 +1,63 @@
+body {
+  background-color: black;
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+h1 {
+  font-size: 6rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.mb-100 {
+  margin-bottom: 100px;
+}
+
+.text-white {
+  color: white;
+}
+  @keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .gradient-text {
+    font-weight: bolder;
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    background-size: 200% 200%;
+    animation: gradient-animation 5s ease infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+.soon {
+  font-size: 1.5rem;
+  font-family: monospace;
+  color: #FFFF00;
+}
+
+.tagline {
+  font-size: 2rem;
+  font-family: monospace;
+  color: #00ff00;
+}
