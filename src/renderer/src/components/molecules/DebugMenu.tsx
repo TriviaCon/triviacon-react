@@ -1,7 +1,7 @@
 import React from "react";
 import { useCategories } from "../../hooks/useCategories";
-import { Navbar, Nav, Dropdown } from "react-bootstrap";
-import { Bug, ExclamationTriangle, ExclamationTriangleFill, Github, QuestionOctagon, Trash } from "react-bootstrap-icons";
+import { Dropdown } from "react-bootstrap";
+import { Bug, ExclamationTriangleFill, Github, QuestionOctagon, Trash } from "react-bootstrap-icons";
 
 const DebugMenu: React.FC = () => {
   const { loadQuizData } = useCategories();

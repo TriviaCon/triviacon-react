@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import { Table } from "react-bootstrap";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";

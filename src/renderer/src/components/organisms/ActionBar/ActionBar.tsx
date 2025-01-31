@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { useCategories } from "../../../hooks/useCategories";
-import { FileEarmarkPlus, Floppy, Play, PlayFill, Upload } from "react-bootstrap-icons";
+import { FileEarmarkPlus, Floppy, PlayFill, Upload } from "react-bootstrap-icons";
 
 interface ActionBarProps {
   activeTab: string;
