@@ -101,7 +101,26 @@ app.whenReady().then(() => {
       window.close()
     }
   })
+  
+  ipcMain.handle('open-file-dialog', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        { name: 'JSON', extensions: ['json'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    })
+    
+    return result.filePaths[0]
+  })
+  
+  // Add this alongside your other ipcMain handlers
+  ipcMain.handle('read-file', async (_event, filePath) => {
+    const fileContent = await fs.promises.readFile(filePath, 'utf8')
+    return fileContent
+  })
 
+  
   createWindow()
 
   app.on('activate', function () {
@@ -154,3 +173,4 @@ function createScreenWindow(): void {
     screenWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: '?screen=true' })
   }
 }
+

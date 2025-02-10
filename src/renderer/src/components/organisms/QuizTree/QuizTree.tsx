@@ -38,7 +38,7 @@ const QuizTree: React.FC<QuizTreeProps> = ({
           Add
         </Button>
       </Form>
-      <div style={{ overflowY: "auto", maxHeight: "50vh" }}>
+      <div style={{flex: "grow"}}>
         <Accordion flush className="me-1">
           {categories.map((category) => (
             <Accordion.Item key={category.cID} eventKey={category.cID}>

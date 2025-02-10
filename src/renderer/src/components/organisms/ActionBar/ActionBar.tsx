@@ -1,7 +1,7 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Button, Dropdown, SplitButton } from "react-bootstrap";
 import { useCategories } from "../../../hooks/useCategories";
-import { FileEarmarkPlus, Floppy, PlayFill, Upload } from "react-bootstrap-icons";
+import { FileEarmarkPlus, Floppy, Floppy2, PlayFill, Upload } from "react-bootstrap-icons";
 
 interface ActionBarProps {
   activeTab: string;
@@ -22,9 +22,8 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
                   "Create a new, empty Quiz? \n\nUnsaved changes will be lost!"
                 )
               ) {
-                localStorage.clear();
                 loadQuizData("/blankQuiz.json");
-                window.location.reload();
+                localStorage.clear();
               }
             }}
           >
@@ -33,20 +32,27 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           <Button
             variant="warning"
             className="me-1"
-            onClick={() =>
-              confirm("Load a Quiz? \n\nUnsaved changes will be lost!")
-            }
+            onClick={async () => {
+              if (confirm("Load a Quiz? \n\nUnsaved changes will be lost!")) {
+                const filePath = await window.electron.ipcRenderer.invoke('open-file-dialog');
+                const fileContent = await window.electron.ipcRenderer.invoke('read-file', filePath);
+                loadQuizData(fileContent);
+              }
+            }}
           >
             <Upload className="me-1"/>Load Quiz
           </Button>
-          <Button
+          <SplitButton
+            title={<><Floppy className="me-1" /> Save Quiz</>}
             variant="success"
-            onClick={() =>
-              alert("Quiz {quizName_quizDate} saved successfully!")
-            }
-          >
-            <Floppy className="me-1"/>Save Quiz
-          </Button>
+            drop="down-centered"
+            onClick={() => alert("Quiz {quizName_quizDate} saved successfully!")}>
+           <Dropdown.Item
+           onClick={() => alert("Quiz {quizName_quizDate} saved successfully!")}
+           >
+            <Floppy className="me-1" />Save as...
+            </Dropdown.Item> 
+          </SplitButton>
         </>
       ) : (
         <Button

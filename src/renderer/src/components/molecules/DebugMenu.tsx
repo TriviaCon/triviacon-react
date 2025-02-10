@@ -7,7 +7,7 @@ const DebugMenu: React.FC = () => {
   const { loadQuizData } = useCategories();
   return (
     <>
-          <Dropdown align="end" drop="up">
+          <Dropdown align="end" drop="down" className="me-2">
             <Dropdown.Toggle id="debug-dropdown" size="sm">
               <Bug className="me-2"/> Debug
             </Dropdown.Toggle>

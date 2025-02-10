@@ -37,12 +37,10 @@ export const RunnerView = () => {
   return (
     <Container fluid className="d-flex flex-column">
       <Row>
-        <Col>
           <ScreenControls />
-        </Col>
       </Row>
       <Row className="flex-grow-1">
-        <Col xl={3}>
+        <Col xs={4} className="border-end">
           <TeamTable />
         </Col>
         <Col className="border-start d-flex flex-column">

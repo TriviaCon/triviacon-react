@@ -4,7 +4,6 @@ import { CategoriesProvider } from './context/categories'
 import Header from './components/molecules/Header'
 import { Container, Row } from 'react-bootstrap'
 import ScreenView from './components/organisms/ScreenView/ScreenView'
-import Footer from './components/molecules/Footer'
 import ControlView from './components/organisms/ControlView/ControlView'
 
 function App(): JSX.Element {
@@ -22,7 +21,6 @@ function App(): JSX.Element {
         <Row className="flex-grow-1 d-flex flex-column mx-0">
           {isScreen ? <ScreenView /> : <ControlView />}
         </Row>
-        <Row>{isScreen ? null : <Footer />}</Row>
       </CategoriesProvider>
     </Container>
   )

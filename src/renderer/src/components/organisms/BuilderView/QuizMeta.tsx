@@ -1,6 +1,9 @@
-import { Alert, Col, Form, Row, Table } from "react-bootstrap";
+import { Alert, Button, Col, Form, Row, Image } from "react-bootstrap";
 import { useCategories } from "../../../hooks/useCategories";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
+import { useState } from "react";
+import { QuizStatsModal } from "./QuizStatsModal";
+import { BarChartLine, InfoCircle, Upload } from "react-bootstrap-icons";
 
 export const QuizMeta = () => {
   const { categories } = useCategories();
@@ -9,21 +12,27 @@ export const QuizMeta = () => {
     quizAuthor: "",
     quizLocation: "",
     quizDate: "",
+    quizImage: "",
   });
+  const [showStatsModal, setShowStatsModal] = useState(false);
+
   return (
     <>
       <h2>Quiz</h2>
       <Row>
-        <Col>
-          <Alert variant="light">
-            <Form>
-              <h6>
-                <i className="bi bi-info-circle me-2"></i>Quiz Info
-              </h6>
-              <Row className="mb-1">
-                <Col>
-                  <Form.Group controlId="quizName">
-                    <Form.Label>Quiz Name</Form.Label>
+        <Alert variant="light">
+          <Alert.Heading>
+            <InfoCircle className="me-2"/>Quiz Info
+            <Button size="sm" className="float-end" onClick={() => setShowStatsModal(true)}>
+              <BarChartLine className="me-2"/>Stats
+            </Button>
+          </Alert.Heading>
+          <Form>
+            <Row>
+              <Col sm={6}>
+                <Row className="mb-1">
+                  <Form.Label column sm={2} className="text-end">Name</Form.Label>
+                  <Col sm={10}>
                     <Form.Control
                       type="text"
                       size="sm"
@@ -36,11 +45,11 @@ export const QuizMeta = () => {
                         })
                       }
                     />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group controlId="quizAuthor">
-                    <Form.Label>Quiz Author</Form.Label>
+                  </Col>
+                </Row>
+                <Row className="mb-1">
+                  <Form.Label column sm={2} className="text-end">Author</Form.Label>
+                  <Col sm={10}>
                     <Form.Control
                       type="text"
                       size="sm"
@@ -53,13 +62,11 @@ export const QuizMeta = () => {
                         })
                       }
                     />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row className="mb-1">
-                <Col>
-                  <Form.Group controlId="quizDate">
-                    <Form.Label>Quiz Date</Form.Label>
+                  </Col>
+                </Row>
+                <Row className="mb-1">
+                  <Form.Label column sm={2} className="text-end">Date</Form.Label>
+                  <Col sm={10}>
                     <Form.Control
                       type="date"
                       size="sm"
@@ -71,11 +78,11 @@ export const QuizMeta = () => {
                         })
                       }
                     />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group controlId="quizLocation">
-                    <Form.Label>Quiz Location</Form.Label>
+                  </Col>
+                </Row>
+                <Row className="mb-1">
+                  <Form.Label column sm={2} className="text-end">Location</Form.Label>
+                  <Col sm={10}>
                     <Form.Control
                       type="text"
                       size="sm"
@@ -88,55 +95,18 @@ export const QuizMeta = () => {
                         })
                       }
                     />
-                  </Form.Group>
-                </Col>
-              </Row>
-            </Form>
-          </Alert>
-        </Col>
-        <Col>
-          <Alert variant="info">
-            <h6 className="alert-heading">
-              <i className="bi bi-bar-chart-line me-2"></i>Quiz Statistics
-            </h6>
-            <Table size="sm" bordered variant="info">
-              <tbody>
-                <tr>
-                  <td className="text-end" style={{ whiteSpace: "nowrap" }}>
-                    <strong>Total Categories</strong>
-                  </td>
-                  <td className="text-start">{categories.length}</td>
-                </tr>
-                <tr>
-                  <td className="text-end" style={{ whiteSpace: "nowrap" }}>
-                    <strong>Total Questions</strong>
-                  </td>
-                  <td className="text-start">
-                    {categories.reduce(
-                      (total, category) => total + category.questions.length,
-                      0
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-end" style={{ whiteSpace: "nowrap" }}>
-                    <strong>Media Questions</strong>
-                  </td>
-                  <td className="text-start">
-                    {categories.reduce(
-                      (total, category) =>
-                        total +
-                        category.questions.filter((question) => question.media)
-                          .length,
-                      0
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-          </Alert>
-        </Col>
+                  </Col>
+                </Row>
+              </Col>
+              <Col sm={6}>
+                <Image className="me-2" />Splash Image
+                <Image src={quizInfo.quizImage || "https://placehold.co/1280x720/transparent/CCC.png"} thumbnail/>
+              </Col>
+            </Row>
+          </Form>
+        </Alert>
       </Row>
+      <QuizStatsModal show={showStatsModal} onHide={() => setShowStatsModal(false)} />
     </>
   );
 };

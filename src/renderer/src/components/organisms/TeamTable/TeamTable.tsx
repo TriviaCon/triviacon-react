@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import { Table } from "react-bootstrap";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
-import { PersonFillAdd, PersonXFill } from "react-bootstrap-icons";
+import { FastForwardCircleFill, PersonFillAdd, PersonXFill, RewindCircleFill } from "react-bootstrap-icons";
 
 const TeamTable: React.FC = () => {
   const [teams, setTeams] = useLocalStorage("teams", []);
@@ -68,7 +68,7 @@ const TeamTable: React.FC = () => {
   };
 
   return (
-    <div className="d-flex flex-column h-100">
+    <div className="d-flex flex-column zzzh-100">
       <div className="d-flex justify-content-between align-items-center">
         <h2>Teams</h2>
         <Form className="d-flex align-items-center" onSubmit={handleAddTeam}>
@@ -87,6 +87,49 @@ const TeamTable: React.FC = () => {
           </Form.Group>
         </Form>
       </div>
+      <Alert
+        variant="light"
+        className="d-flex justify-content-between align-items-center mb-0"
+      >
+        <span>Current Team:</span>
+        <span>
+          <strong>{currentTeam?.name || "No team selected"}</strong>
+        </span>
+        <div>
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            className="me-2"
+            onClick={() => {
+              const teams = JSON.parse(localStorage.getItem("teams") || "[]");
+              const currentIndex = teams.findIndex(
+                (team) => team.id === currentTeam?.id
+              );
+              const prevIndex =
+                (currentIndex - 1 + teams.length) % teams.length;
+              setCurrentTeam(teams[prevIndex]);
+            }}
+          >
+            <RewindCircleFill className="me-1" />
+            Prev.
+          </Button>
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            onClick={() => {
+              const teams = JSON.parse(localStorage.getItem("teams") || "[]");
+              const currentIndex = teams.findIndex(
+                (team) => team.id === currentTeam?.id
+              );
+              const nextIndex = (currentIndex + 1) % teams.length;
+              setCurrentTeam(teams[nextIndex]);
+            }}
+          >
+            <FastForwardCircleFill className="me-1" />
+            Next
+          </Button>
+        </div>
+      </Alert>
       <Table striped>
         <thead>
           <tr>
@@ -166,49 +209,6 @@ const TeamTable: React.FC = () => {
           )}
         </tbody>
       </Table>
-      <Alert
-        variant="info"
-        className="d-flex justify-content-between align-items-center mb-0"
-      >
-        <span>Current Team:</span>
-        <span>
-          <strong>{currentTeam?.name || "No team selected"}</strong>
-        </span>
-        <div>
-          <Button
-            variant="outline-secondary"
-            size="sm"
-            className="me-2"
-            onClick={() => {
-              const teams = JSON.parse(localStorage.getItem("teams") || "[]");
-              const currentIndex = teams.findIndex(
-                (team) => team.id === currentTeam?.id
-              );
-              const prevIndex =
-                (currentIndex - 1 + teams.length) % teams.length;
-              setCurrentTeam(teams[prevIndex]);
-            }}
-          >
-            <i className="bi bi-rewind-circle-fill me-1"></i>
-            Prev.
-          </Button>
-          <Button
-            variant="outline-secondary"
-            size="sm"
-            onClick={() => {
-              const teams = JSON.parse(localStorage.getItem("teams") || "[]");
-              const currentIndex = teams.findIndex(
-                (team) => team.id === currentTeam?.id
-              );
-              const nextIndex = (currentIndex + 1) % teams.length;
-              setCurrentTeam(teams[nextIndex]);
-            }}
-          >
-            <i className="bi bi-fast-forward-circle-fill me-1"></i>
-            Next
-          </Button>
-        </div>
-      </Alert>
     </div>
   );
 };
