@@ -1,15 +1,16 @@
-import { createContext, FormEvent } from 'react'
+import { createContext } from 'react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { v4 as uuidv4 } from 'uuid'
+import { Uuid } from '@renderer/types'
 
 export type Category = {
-  cID: uuidv4
+  cID: Uuid
   name: string
   questions: Question[]
 }
 
 export type Question = {
-  qID: uuidv4
+  qID: Uuid
   text: string
   answer: string
   hints: string[]
@@ -22,11 +23,11 @@ export type Question = {
 export type CategoriesContextType = {
   loadQuizData: (url: string) => Promise<void>
   addCategory: (name: string) => Promise<unknown>
-  deleteCategory: (cID: string) => Promise<unknown>
-  updateCategory: (cID: uuidv4, event: FormEvent) => void
-  addQuestion: (cID: uuidv4) => void
-  updateQuestion: (cID: string, qID: string, question: Partial<Question>) => void
-  deleteQuestion: (categoryId: number, questionId: number) => void
+  deleteCategory: (cID: Uuid) => Promise<unknown>
+  updateCategory: (cID: Uuid, category: Partial<Category>) => void
+  addQuestion: (cID: Uuid) => void
+  updateQuestion: (cID: Uuid, qID: string, question: Partial<Question>) => void
+  deleteQuestion: (categoryId: Uuid, questionId: Uuid) => void
 
   categories: Category[]
 }
@@ -47,15 +48,7 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
     ])
   }
 
-  const selectCategory = (cID: uuidv4) => {
-    useLocalStorage('selectedCategory', cID)
-  }
-
-  const selectQuestion = (qID: uuidv4) => {
-    useLocalStorage('selectedQuestion', qID)
-  }
-
-  const addQuestion = (cID: uuidv4) => {
+  const addQuestion = (cID: Uuid) => {
     const category = categories.find((category) => category.cID === cID)
     if (!category) {
       return
@@ -129,7 +122,7 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
     )
   }
 
-  const deleteQuestion = (categoryId: number, questionId: number) => {
+  const deleteQuestion = (categoryId: Uuid, questionId: Uuid) => {
     setCategories(
       categories.map((c) =>
         c.cID === categoryId
