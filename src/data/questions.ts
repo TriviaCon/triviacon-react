@@ -49,9 +49,26 @@ const _delete = async (id: number): Promise<void> => {
   await deleteStmt.run(id)
   await deleteStmt.finalize()
 }
+
+const create = async (question: Omit<Question, 'id'>): Promise<void> => {
+  if (!db) {
+    throw new Error('Database not initialized')
+  }
+
+  const { text, answer, media, categoryId } = question
+  await db.run(
+    'INSERT INTO Questions (text, answer, media, categoryId) VALUES (?, ?, ?, ?)',
+    text,
+    answer,
+    media,
+    categoryId
+  )
+}
+
 export default {
   byId,
   allByCategoryId,
   update,
-  delete: _delete
+  delete: _delete,
+  create
 }

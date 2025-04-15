@@ -1,12 +1,17 @@
-import { Button, Card, Form } from 'react-bootstrap'
+import { Card, Form } from 'react-bootstrap'
 import { CloudUpload } from 'react-bootstrap-icons'
-import useQuestion from '@renderer/hooks/useQuestion'
 import toBase64 from '@renderer/utils/toBase64'
+import { useQuestion } from '@renderer/hooks/useQuestion'
+import { Question } from '@renderer/types'
+import { useUpdateQuestionMutation } from '@renderer/hooks/useUpdateQuestionMutation'
 
 const QuestionView = ({ id }: { id: number }) => {
-  const { question, updateText, updateAnswer, updateMedia, addHint } = useQuestion(id)
+  const question = useQuestion(id)
+  const updateQuestionMutation = useUpdateQuestionMutation(id)
 
-  if (!question) {
+  const update = (q: Partial<Question>) => updateQuestionMutation.mutate(q)
+
+  if (!question.data) {
     return 'loading...'
   }
 
@@ -23,10 +28,8 @@ const QuestionView = ({ id }: { id: number }) => {
           <Form.Control
             type="text"
             id="question"
-            value={question.text}
-            onChange={(e) => {
-              updateText(e.target.value)
-            }}
+            value={question.data.text}
+            onChange={(e) => update({ text: e.target.value })}
           />
         </Form.Group>
         <Form.Group className="mb-3">
@@ -34,8 +37,8 @@ const QuestionView = ({ id }: { id: number }) => {
           <Form.Control
             type="text"
             id="answer"
-            value={question.answer}
-            onChange={(e) => updateAnswer(e.target.value)}
+            value={question.data.answer}
+            onChange={(e) => update({ answer: e.target.value })}
           />
         </Form.Group>
         <Card className="mb-3">
@@ -52,7 +55,7 @@ const QuestionView = ({ id }: { id: number }) => {
                 alignItems: 'center'
               }}
             >
-              {question.media && <img src={question.media} />}
+              {question.media && <img src={question.data.media} />}
               <Card.Body className="py-1 px-2 d-flex justify-content-center align-items-center">
                 <div
                   className="drag-upload-area"
@@ -61,7 +64,7 @@ const QuestionView = ({ id }: { id: number }) => {
                     e.preventDefault()
                     const file = e.dataTransfer.files[0]
                     if (file && question) {
-                      updateMedia(await toBase64(file))
+                      update({ media: await toBase64(file) })
                     }
                   }}
                   style={{
@@ -80,7 +83,7 @@ const QuestionView = ({ id }: { id: number }) => {
                     onChange={async (e) => {
                       const file = e.target.files?.[0]
                       if (file && question) {
-                        updateMedia(await toBase64(file))
+                        update({ media: await toBase64(file) })
                       }
                     }}
                     style={{ display: 'none' }}
@@ -91,8 +94,8 @@ const QuestionView = ({ id }: { id: number }) => {
             <Form.Control
               type="text"
               id="media"
-              value={question.media}
-              onChange={(e) => updateMedia(e.target.value)}
+              value={question.data.media}
+              onChange={(e) => update({ media: e.target.value })}
             />
           </Card.Body>
         </Card>
@@ -100,9 +103,9 @@ const QuestionView = ({ id }: { id: number }) => {
           <Card.Body className="py-1 px-2">
             <h6 className="mt-0 d-flex justify-content-between align-items-center">
               Hints
-              <Button size="sm" className="ms-auto" onClick={addHint}>
-                Add
-              </Button>
+              {/* <Button size="sm" className="ms-auto" onClick={addHint}> */}
+              {/*   Add */}
+              {/* </Button> */}
             </h6>
             {/* <Form.Group className="mb-3"> */}
             {/*   {question.hints.length > 0 */}

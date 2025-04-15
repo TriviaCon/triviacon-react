@@ -11,13 +11,17 @@ export const BuilderView = () => {
   const [view, setView] = useState<View>(null)
   const categories = useCategories()
 
+  if (!categories.data) {
+    return 'loading...'
+  }
+
   return (
     <Container fluid className="d-flex flex-column">
       <Row>
         <Col>
           <QuizMeta />
           <QuizTree
-            {...categories}
+            categories={categories.data ?? []}
             setSelectedCategory={(id) => (id ? setView({ view: 'category', id }) : setView(null))}
             setSelectedQuestion={(id) => (id ? setView({ view: 'question', id }) : setView(null))}
           />

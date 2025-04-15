@@ -1,23 +1,27 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent } from 'react'
 import { Accordion, Button, Form } from 'react-bootstrap'
 import CategoriesAccordionItem from '@renderer/components/molecules/QuizTreeItem'
 import { Category } from '@renderer/types'
+import { useAddCategoryMutation } from '@renderer/hooks/useAddCategoryMutation'
 
-const AddCategoryForm = ({ onAdd }: { onAdd: (name: string) => Promise<unknown> }) => {
-  const [pending, setPending] = useState(false)
+const AddCategoryForm = () => {
+  const mutation = useAddCategoryMutation()
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     const form = event.target as HTMLFormElement
     const data = new FormData(form)
-    setPending(true)
-    await onAdd(data.get('name') as string)
+    await mutation.mutateAsync(data.get('name') as string)
     form.reset()
-    setPending(false)
   }
   return (
     <Form className="d-flex gap-2 mb-2" onSubmit={handleSubmit}>
-      <Form.Control type="text" name="name" placeholder="Add new category" readOnly={pending} />
-      <Button type="submit" variant="primary" disabled={pending}>
+      <Form.Control
+        type="text"
+        name="name"
+        placeholder="Add new category"
+        readOnly={mutation.isPending}
+      />
+      <Button type="submit" variant="primary" disabled={mutation.isPending}>
         Add
       </Button>
     </Form>
@@ -26,25 +30,19 @@ const AddCategoryForm = ({ onAdd }: { onAdd: (name: string) => Promise<unknown> 
 
 type QuizTreeProps = {
   categories: Category[]
-  addCategory: (name: string) => Promise<void>
-  deleteCategory: (id: number) => Promise<void>
-  addQuestion: (categoryId: number) => Promise<void>
   setSelectedCategory: (id: number | null) => void
   setSelectedQuestion: (id: number | null) => void
 }
 
 const QuizTree: React.FC<QuizTreeProps> = ({
   categories,
-  addCategory,
-  deleteCategory,
-  addQuestion,
   setSelectedCategory,
   setSelectedQuestion
 }) => {
   return (
     <div className="d-flex flex-column">
       <h3>Categories ({categories.length})</h3>
-      <AddCategoryForm onAdd={addCategory} />
+      <AddCategoryForm />
       <div style={{ flex: 'grow' }}>
         <Accordion flush className="me-1">
           {categories.map((category) => (
@@ -57,8 +55,6 @@ const QuizTree: React.FC<QuizTreeProps> = ({
               }}
               onSelectQuestion={(id) => setSelectedQuestion(id)}
               onClose={console.log}
-              onDelete={() => deleteCategory(category.id)}
-              onAddQuestion={() => addQuestion(category.id)}
             />
           ))}
           {categories.length === 0 && (

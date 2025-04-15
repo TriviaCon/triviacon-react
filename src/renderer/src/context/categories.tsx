@@ -15,11 +15,12 @@ export const CATEGORIES_CONTEXT = createContext<CategoriesContextType>(null!)
 
 export const CategoriesProvider = ({ children }: { children: React.ReactNode }) => {
   const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const query = async () => {
       await ipc.db.open('mocks/mockQuiz.tcq')
-      setCategories(await ipc.db.categories.all())
+      setLoading(false)
     }
     query()
   }, [])
@@ -37,6 +38,10 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
 
   const deleteCategory = async (id: number) => {
     await ipc.db.categories.remove(id)
+  }
+
+  if (loading) {
+    return
   }
 
   return (

@@ -1,4 +1,6 @@
+import { useAddQuestionMutation } from '@renderer/hooks/useAddQuestionMutation'
 import useCategoryQuestions from '@renderer/hooks/useCategoryQuestions'
+import { useDeleteCategoryMutation } from '@renderer/hooks/useDeleteCategoryMutation'
 import { Category } from '@renderer/types'
 import { useState } from 'react'
 import { Accordion, Button, Form } from 'react-bootstrap'
@@ -34,18 +36,19 @@ const CategoriesAccordionItem = ({
   category,
   onOpen,
   onSelectQuestion,
-  onClose,
-  onDelete,
-  onAddQuestion
+  onClose
 }: {
   category: Category
   onOpen: VoidFunction
   onSelectQuestion: (id: number) => void
   onClose: VoidFunction
-  onDelete: () => Promise<unknown>
-  onAddQuestion: VoidFunction
 }) => {
-  const { questions } = useCategoryQuestions(category.id)
+  const { data: questions } = useCategoryQuestions(category.id)
+  const deleteCategoryMutation = useDeleteCategoryMutation(category.id)
+  const addQuestionMutation = useAddQuestionMutation(category.id)
+  if (!questions) {
+    return
+  }
   return (
     <Accordion.Item eventKey={`${category.id}`}>
       <Accordion.Header onClick={onOpen}>
@@ -66,7 +69,10 @@ const CategoriesAccordionItem = ({
               // updateCategory(selectedCategory?.cID, e)
             }}
           />
-          <DeleteCategoryButton name={category.name} onDelete={onDelete} />
+          <DeleteCategoryButton
+            name={category.name}
+            onDelete={deleteCategoryMutation.mutateAsync}
+          />
         </div>
         <div className="d-flex flex-wrap gap-2">
           {questions.map((question) => (
@@ -98,7 +104,7 @@ const CategoriesAccordionItem = ({
                   category.id +
                   '\n'
               )
-              onAddQuestion()
+              addQuestionMutation.mutate()
             }}
           >
             <PlusLg />

@@ -3,7 +3,7 @@ import { useCategories } from '../../../hooks/useCategories'
 import useStats from '@renderer/hooks/useStats'
 
 export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: VoidFunction }) => {
-  const { categories } = useCategories()
+  const categories = useCategories()
   const { stats } = useStats()
 
   return (
@@ -20,7 +20,7 @@ export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: VoidFu
               <td className="text-end" style={{ whiteSpace: 'nowrap' }}>
                 <strong>Total Categories</strong>
               </td>
-              <td className="text-start">{categories.length}</td>
+              <td className="text-start">{categories.data?.length}</td>
             </tr>
             <tr>
               <td className="text-end" style={{ whiteSpace: 'nowrap' }}>

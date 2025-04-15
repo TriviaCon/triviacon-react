@@ -9,7 +9,7 @@ export const sqlite = async (): Promise<typeof import('sqlite3')> => {
 
 import { type Database, open } from 'sqlite'
 import { dbg } from '.'
-import { Category, Stats } from '@renderer/types'
+import { Stats } from '@renderer/types'
 import questions from './questions'
 import categories from './categories'
 
