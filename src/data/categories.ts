@@ -25,6 +25,16 @@ const all = async (): Promise<Category[]> => {
   return categories as Category[]
 }
 
+// Read a category by ID
+const byId = async (id: number): Promise<Category | null> => {
+  if (!db) {
+    throw new Error('Database not initialized')
+  }
+
+  const category = await db.get('SELECT id, name FROM Categories WHERE id = ?', id)
+  return category || null
+}
+
 // Update an existing category
 const update = async (id: number, name: string): Promise<void> => {
   if (!db) {
@@ -45,6 +55,7 @@ const remove = async (id: number): Promise<void> => {
 
 export default {
   all,
+  byId,
   create,
   update,
   remove

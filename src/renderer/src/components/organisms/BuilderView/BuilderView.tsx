@@ -24,6 +24,7 @@ export const BuilderView = () => {
             categories={categories.data ?? []}
             setSelectedCategory={(id) => (id ? setView({ view: 'category', id }) : setView(null))}
             setSelectedQuestion={(id) => (id ? setView({ view: 'question', id }) : setView(null))}
+            editable={true}
           />
         </Col>
         <Col md={8} className="border-start">

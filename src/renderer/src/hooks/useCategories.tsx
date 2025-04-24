@@ -1,9 +1,11 @@
 import { ipc } from '@renderer/main'
 import keys from '@renderer/utils/keys'
-import { useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 
-export const useCategories = () =>
-  useQuery({
+const categoriesQuery = () =>
+  queryOptions({
     queryKey: keys.categories(),
     queryFn: () => ipc.db.categories.all()
   })
+
+export const useCategories = () => useQuery(categoriesQuery())

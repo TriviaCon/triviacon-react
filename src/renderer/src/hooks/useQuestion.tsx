@@ -1,12 +1,14 @@
 import { ipc } from '@renderer/main'
-import { useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 import keys from '@renderer/utils/keys'
 
-export const useQuestion = (id: number) =>
-  useQuery({
+export const questionQuery = (id: number) =>
+  queryOptions({
     queryKey: keys.question(id),
     queryFn: () => ipc.db.questions.byId(id)
   })
+
+export const useQuestion = (id: number) => useQuery(questionQuery(id))
 
 // const useQuestion = (id) => {
 //   const [question, setQuestion] = useState<Question>()

@@ -32,17 +32,19 @@ type QuizTreeProps = {
   categories: Category[]
   setSelectedCategory: (id: number | null) => void
   setSelectedQuestion: (id: number | null) => void
+  editable: boolean
 }
 
 const QuizTree: React.FC<QuizTreeProps> = ({
   categories,
   setSelectedCategory,
-  setSelectedQuestion
+  setSelectedQuestion,
+  editable
 }) => {
   return (
     <div className="d-flex flex-column">
       <h3>Categories ({categories.length})</h3>
-      <AddCategoryForm />
+      {editable && <AddCategoryForm />}
       <div style={{ flex: 'grow' }}>
         <Accordion flush className="me-1">
           {categories.map((category) => (
@@ -55,6 +57,7 @@ const QuizTree: React.FC<QuizTreeProps> = ({
               }}
               onSelectQuestion={(id) => setSelectedQuestion(id)}
               onClose={console.log}
+              editable={editable}
             />
           ))}
           {categories.length === 0 && (

@@ -36,12 +36,14 @@ const CategoriesAccordionItem = ({
   category,
   onOpen,
   onSelectQuestion,
-  onClose
+  onClose,
+  editable
 }: {
   category: Category
   onOpen: VoidFunction
   onSelectQuestion: (id: number) => void
   onClose: VoidFunction
+  editable: boolean
 }) => {
   const { data: questions } = useCategoryQuestions(category.id)
   const deleteCategoryMutation = useDeleteCategoryMutation(category.id)
@@ -60,6 +62,7 @@ const CategoriesAccordionItem = ({
       <Accordion.Body onExited={onClose}>
         <div className="d-flex mb-2">
           <Form.Control
+            readOnly={!editable}
             className="me-2"
             name="name"
             type="text"
@@ -69,10 +72,12 @@ const CategoriesAccordionItem = ({
               // updateCategory(selectedCategory?.cID, e)
             }}
           />
-          <DeleteCategoryButton
-            name={category.name}
-            onDelete={deleteCategoryMutation.mutateAsync}
-          />
+          {editable && (
+            <DeleteCategoryButton
+              name={category.name}
+              onDelete={deleteCategoryMutation.mutateAsync}
+            />
+          )}
         </div>
         <div className="d-flex flex-wrap gap-2">
           {questions.map((question) => (
@@ -90,25 +95,27 @@ const CategoriesAccordionItem = ({
               </span>
             </Button>
           ))}{' '}
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              alert(
-                'Not implemented yet!\n' +
-                  'This will add a new question to \n' +
-                  'category: ' +
-                  category.name +
-                  '\n' +
-                  'cID: ' +
-                  category.id +
-                  '\n'
-              )
-              addQuestionMutation.mutate()
-            }}
-          >
-            <PlusLg />
-          </Button>
+          {editable && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => {
+                alert(
+                  'Not implemented yet!\n' +
+                    'This will add a new question to \n' +
+                    'category: ' +
+                    category.name +
+                    '\n' +
+                    'cID: ' +
+                    category.id +
+                    '\n'
+                )
+                addQuestionMutation.mutate()
+              }}
+            >
+              <PlusLg />
+            </Button>
+          )}
         </div>
       </Accordion.Body>
     </Accordion.Item>
