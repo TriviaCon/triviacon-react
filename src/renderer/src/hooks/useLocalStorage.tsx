@@ -1,7 +1,7 @@
-import { useMemo, useSyncExternalStore } from "react"
+import { useMemo, useSyncExternalStore } from 'react'
 
 const getOrInitData = <T,>(key: string, initialValue: T) => {
-  const data = localStorage.getItem(key);
+  const data = localStorage.getItem(key)
   if (!data) {
     localStorage.setItem(key, JSON.stringify(initialValue))
     return initialValue
@@ -10,21 +10,21 @@ const getOrInitData = <T,>(key: string, initialValue: T) => {
 }
 
 const syncedLocalStorage = <T,>(key: string, initialValue: T) => {
-  let data = getOrInitData(key, initialValue);
-  let localCallback: (() => void) | null = null;
+  let data = getOrInitData(key, initialValue)
+  let localCallback: (() => void) | null = null
 
-  const getSnapshot = () => data;
+  const getSnapshot = () => data
 
   const subscribe = (callback: () => void) => {
-    localCallback = callback;
+    localCallback = callback
     const handler = (event: StorageEvent) => {
       if (event.key !== key) {
-        return;
+        return
       }
 
-      const newData = getOrInitData(key, initialValue);
+      const newData = getOrInitData(key, initialValue)
       if (newData !== data) {
-        data = newData;
+        data = newData
         callback()
       }
     }
@@ -33,21 +33,24 @@ const syncedLocalStorage = <T,>(key: string, initialValue: T) => {
   }
 
   const setState = (value: T | ((prev: T) => T)) => {
-    const val = value instanceof Function ? value(data) : value;
+    const val = value instanceof Function ? value(data) : value
     localStorage.setItem(key, JSON.stringify(val))
     if (localCallback) {
-      data = val;
-      localCallback();
+      data = val
+      localCallback()
     }
-  };
+  }
 
   return { subscribe, getSnapshot, setState }
 }
 
 export const useLocalStorage = <T,>(key: string, initialValue: T) => {
-  const { subscribe, getSnapshot, setState } = useMemo(() => syncedLocalStorage(key, initialValue), []);
+  const { subscribe, getSnapshot, setState } = useMemo(
+    () => syncedLocalStorage(key, initialValue),
+    []
+  )
 
-  const state = useSyncExternalStore(subscribe, getSnapshot);
+  const state = useSyncExternalStore(subscribe, getSnapshot)
 
   return [state, setState] as const
 }

@@ -7,11 +7,39 @@ import { useRuntimeControls } from '@renderer/hooks/runtime'
 import { useQueryClient } from '@tanstack/react-query'
 import { questionsQuery } from '@renderer/hooks/useCategoryQuestions'
 import { categoryQuery } from '@renderer/hooks/useCategory'
-import { questionQuery } from '@renderer/hooks/useQuestion'
+import { questionQuery, useQuestion } from '@renderer/hooks/useQuestion'
+import { hintsQuery, useHints } from '@renderer/hooks/useHints'
+import BasicQuestionViewer from '../QuestionView/BasicQuestionViewer'
+import { useState } from 'react'
+
+const QuestionColumn = ({ id }: { id: number }) => {
+  const { toggleAnswer, toggleHints, toggleUsed, revealedAnswers, revealedHints, used } =
+    useRuntimeControls()
+  const question = useQuestion(id)
+  const hints = useHints(id)
+
+  if (!question.data || !hints.data) {
+    return
+  }
+
+  return (
+    <BasicQuestionViewer
+      question={question.data}
+      hints={hints.data}
+      answerRevealed={revealedAnswers.includes(id)}
+      onRevealAnswer={() => toggleAnswer(id)}
+      hintsRevealed={revealedHints.includes(id)}
+      onRevealHints={() => toggleHints(id)}
+      used={used.includes(id)}
+      onUse={() => toggleUsed(id)}
+    />
+  )
+}
 
 export const RunnerView = () => {
   const queryClient = useQueryClient()
   const { transition } = useRuntimeControls()
+  const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null)
   const categories = useCategories()
 
   if (!categories.data) {
@@ -32,6 +60,7 @@ export const RunnerView = () => {
       throw new Error(`Category ${id} not found`)
     }
 
+    setSelectedQuestionId(null)
     transition({
       screen: 'questions',
       data: {
@@ -46,25 +75,29 @@ export const RunnerView = () => {
       return
     }
 
-    const question = await queryClient.fetchQuery(questionQuery(id))
+    const [question, hints] = await Promise.all([
+      queryClient.fetchQuery(questionQuery(id)),
+      queryClient.fetchQuery(hintsQuery(id))
+    ])
 
+    setSelectedQuestionId(id)
     transition({
       screen: 'question',
-      data: { question }
+      data: { question, hints, answerRevealed: true }
     })
   }
 
   return (
-    <Container fluid className="d-flex flex-column">
+    <Container fluid>
       <Row>
         <ScreenControls />
       </Row>
-      <Row className="flex-grow-1">
-        <Col xs={4} className="border-end">
+      <Row>
+        <Col lg={12} xl={4} className="border-end">
           <TeamTable />
         </Col>
         <Col className="border-start d-flex flex-column">
-          <Row className="flex-grow-1">
+          <Row>
             <Col xs={4}>
               <QuizTree
                 categories={categories.data}
@@ -73,14 +106,7 @@ export const RunnerView = () => {
                 editable={false}
               />
             </Col>
-            <Col className="border-start">
-              {/* <BasicQuestionViewer */}
-              {/*   categories={categories} */}
-              {/*   selectedCategory={category} */}
-              {/*   selectedQuestion={question} */}
-              {/*   updateQuestion={updateQuestion} */}
-              {/* /> */}
-            </Col>
+            <Col>{selectedQuestionId && <QuestionColumn id={selectedQuestionId} />}</Col>
           </Row>
         </Col>
       </Row>

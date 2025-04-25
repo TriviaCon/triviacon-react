@@ -1,2 +1,2 @@
-export * from "./QuestionView";
-export * from "./BasicQuestionViewer";
+export * from './QuestionView'
+export * from './BasicQuestionViewer'

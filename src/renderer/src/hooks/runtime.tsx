@@ -1,5 +1,5 @@
 import { useLocalStorage } from '@renderer/hooks/useLocalStorage'
-import { Category, Question } from '@renderer/types'
+import { Category, Hint, Question } from '@renderer/types'
 
 export type StateStart = {
   screen: 'start'
@@ -30,6 +30,8 @@ export type StateQuestion = {
   screen: 'question'
   data: {
     question: Question
+    hints: Hint[]
+    answerRevealed: boolean
   }
 }
 
@@ -52,8 +54,17 @@ export type RuntimeState =
   | StateRanking
 
 const RuntimeStateStorageKey = 'runtimeState'
+export const RevealedAnswersStorageKey = 'revealedAnswers'
+export const RevealedHintsStorageKey = 'revealedHints'
+export const UsedQuestionsStorageKey = 'usedQuestions'
 
 export const useRuntimeControls = () => {
+  const [revealedAnswers, setRevealedAnswers] = useLocalStorage<number[]>(
+    RevealedAnswersStorageKey,
+    []
+  )
+  const [revealedHints, setRevealedHints] = useLocalStorage<number[]>(RevealedHintsStorageKey, [])
+  const [used, setUsed] = useLocalStorage<number[]>(UsedQuestionsStorageKey, [])
   const [, setRuntimeState] = useLocalStorage<RuntimeState>(RuntimeStateStorageKey, {
     screen: 'start',
     data: {
@@ -65,11 +76,49 @@ export const useRuntimeControls = () => {
   })
 
   const transition = (newState: RuntimeState) => {
-    setRuntimeState(newState)
+    if (newState.screen === 'question') {
+      setRuntimeState({
+        screen: 'question',
+        data: {
+          ...newState.data,
+          answerRevealed: revealedAnswers.includes(newState.data.question.id)
+        }
+      })
+    } else {
+      setRuntimeState(newState)
+    }
+  }
+
+  const toggleAnswer = (questionId: number) => {
+    if (revealedAnswers.includes(questionId)) {
+      setRevealedAnswers(revealedAnswers.filter((id) => id !== questionId))
+    } else {
+      setRevealedAnswers([...revealedAnswers, questionId])
+    }
+  }
+  const toggleHints = (questionId: number) => {
+    if (revealedHints.includes(questionId)) {
+      setRevealedHints(revealedHints.filter((id) => id !== questionId))
+    } else {
+      setRevealedHints([...revealedHints, questionId])
+    }
+  }
+  const toggleUsed = (questionId: number) => {
+    if (used.includes(questionId)) {
+      setUsed(used.filter((id) => id !== questionId))
+    } else {
+      setUsed([...used, questionId])
+    }
   }
 
   return {
-    transition
+    transition,
+    toggleAnswer,
+    toggleHints,
+    toggleUsed,
+    revealedAnswers,
+    revealedHints,
+    used
   }
 }
 

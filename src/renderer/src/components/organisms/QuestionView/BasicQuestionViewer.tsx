@@ -1,38 +1,35 @@
-import React from "react";
-import {
-  Alert,
-  Card,
-  Col,
-  Container,
-  Form,
-  Row,
-  Table,
-  ToggleButton,
-} from "react-bootstrap";
-import { Category, Question } from "../../../context/categories";
+import { Hint, Question } from '@renderer/types'
+import { Alert, Card, Col, Container, Form, Row, ToggleButton } from 'react-bootstrap'
 
-interface BasicQuestionViewerProps {
-  selectedCategory: Category | null;
-  selectedQuestion: Question | null;
-  updateQuestion: (questionId: string, updates: Partial<Question>) => void;
-}
-
-const BasicQuestionViewer: React.FC<BasicQuestionViewerProps> = ({
-  selectedCategory,
-  selectedQuestion,
-  updateQuestion,
+const BasicQuestionViewer = ({
+  question,
+  hints,
+  answerRevealed,
+  onRevealAnswer,
+  hintsRevealed,
+  onRevealHints,
+  used,
+  onUse
+}: {
+  question: Question
+  hints: Hint[]
+  answerRevealed: boolean
+  onRevealAnswer: VoidFunction
+  hintsRevealed: boolean
+  onRevealHints: VoidFunction
+  used: boolean
+  onUse: VoidFunction
 }) => {
-  if (!selectedQuestion) return <div>No question selected</div>;
   return (
     <Container>
       <Row>
         <Col xs={12}>
-          <h2>{selectedQuestion?.text}</h2>
+          <h2>{question.text}</h2>
         </Col>
       </Row>
       <Row>
         <Col xs={12}>
-          <h3>{selectedQuestion?.answer}</h3>
+          <h3>{question.answer}</h3>
         </Col>
       </Row>
       <Row className="mb-1">
@@ -43,16 +40,14 @@ const BasicQuestionViewer: React.FC<BasicQuestionViewerProps> = ({
           <Card className="mb-2">
             <Card.Body>
               <Row>
-                <Col>{selectedQuestion?.media || "N/A"}</Col>
+                <Col>
+                  <img src={question.media} className="w-100" />
+                </Col>
                 <Col className="border-start">
                   Controls
                   <Row>
                     <Col>
-                      <ToggleButton
-                        type="checkbox"
-                        variant="secondary"
-                        value="1"
-                      >
+                      <ToggleButton type="checkbox" variant="secondary" value="1">
                         Fullscreen
                       </ToggleButton>
                     </Col>
@@ -73,17 +68,9 @@ const BasicQuestionViewer: React.FC<BasicQuestionViewerProps> = ({
             type="switch"
             id="revealhints-switch"
             name="revealHints"
-            label={selectedQuestion?.hintsRevealed ? "Yes" : "No"}
-            checked={selectedQuestion?.hintsRevealed}
-            onChange={() => {
-              if (selectedQuestion && selectedCategory) {
-                const updatedQuestion = {
-                  ...selectedQuestion,
-                  hintsRevealed: !selectedQuestion.hintsRevealed,
-                };
-                updateQuestion(selectedQuestion.qID, updatedQuestion);
-              }
-            }}
+            label={hintsRevealed ? 'Yes' : 'No'}
+            checked={hintsRevealed}
+            onChange={onRevealHints}
           />
         </Col>
       </Row>
@@ -92,13 +79,13 @@ const BasicQuestionViewer: React.FC<BasicQuestionViewerProps> = ({
           <strong>Hints</strong>
         </Col>
         <Col xs={9}>
-          {selectedQuestion?.hints && selectedQuestion.hints.length > 0
-            ? selectedQuestion.hints.map((hint, index) => (
+          {hints.length > 0
+            ? hints.map((hint, index) => (
                 <Alert key={index} variant="info" className="mb-2">
-                  {hint}
+                  {hint.hint}
                 </Alert>
               ))
-            : "No hints"}
+            : 'No hints'}
         </Col>
       </Row>
       <Row>
@@ -110,17 +97,9 @@ const BasicQuestionViewer: React.FC<BasicQuestionViewerProps> = ({
             type="switch"
             id="used-switch"
             name="used"
-            label={selectedQuestion?.used ? "Yes" : "No"}
-            checked={selectedQuestion?.used}
-            onChange={() => {
-              if (selectedQuestion && selectedCategory) {
-                const updatedQuestion = {
-                  ...selectedQuestion,
-                  used: !selectedQuestion.used,
-                };
-                updateQuestion(selectedQuestion.qID, updatedQuestion);
-              }
-            }}
+            label={used ? 'Yes' : 'No'}
+            checked={used}
+            onChange={onUse}
           />
         </Col>
       </Row>
@@ -133,22 +112,14 @@ const BasicQuestionViewer: React.FC<BasicQuestionViewerProps> = ({
             type="switch"
             name="answerRevealed"
             id="answer-reveal-switch"
-            label={selectedQuestion?.answerRevealed ? "Yes" : "No"}
-            checked={selectedQuestion?.answerRevealed}
-            onChange={() => {
-              if (selectedQuestion && selectedCategory) {
-                const updatedQuestion = {
-                  ...selectedQuestion,
-                  answerRevealed: !selectedQuestion.answerRevealed,
-                };
-                updateQuestion(selectedQuestion.qID, updatedQuestion);
-              }
-            }}
+            label={answerRevealed ? 'Yes' : 'No'}
+            checked={answerRevealed}
+            onChange={onRevealAnswer}
           />
         </Col>
       </Row>
     </Container>
-  );
-};
+  )
+}
 
-export default BasicQuestionViewer;
+export default BasicQuestionViewer
