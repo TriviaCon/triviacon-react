@@ -1,56 +1,45 @@
-import { useMemo, useSyncExternalStore } from 'react'
+import { useState, useEffect } from 'react';
 
-const getOrInitData = <T,>(key: string, initialValue: T) => {
-  const data = localStorage.getItem(key)
-  if (!data) {
-    localStorage.setItem(key, JSON.stringify(initialValue))
-    return initialValue
-  }
-  return JSON.parse(data) as T
-}
-
-const syncedLocalStorage = <T,>(key: string, initialValue: T) => {
-  let data = getOrInitData(key, initialValue)
-  let localCallback: (() => void) | null = null
-
-  const getSnapshot = () => data
-
-  const subscribe = (callback: () => void) => {
-    localCallback = callback
-    const handler = (event: StorageEvent) => {
-      if (event.key !== key) {
-        return
-      }
-
-      const newData = getOrInitData(key, initialValue)
-      if (newData !== data) {
-        data = newData
-        callback()
-      }
+export function useLocalStorage<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      return initialValue;
     }
-    window.addEventListener('storage', handler)
-    return () => window.removeEventListener('storage', handler)
-  }
+  });
 
-  const setState = (value: T | ((prev: T) => T)) => {
-    const val = value instanceof Function ? value(data) : value
-    localStorage.setItem(key, JSON.stringify(val))
-    if (localCallback) {
-      data = val
-      localCallback()
+  useEffect(() => {
+    const handleStorage = () => {
+      try {
+        const item = window.localStorage.getItem(key);
+        setStoredValue(item ? JSON.parse(item) : initialValue);
+      } catch (error) {
+        setStoredValue(initialValue);
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener(`${key}-updated`, handleStorage);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener(`${key}-updated`, handleStorage);
+    };
+  }, [key, initialValue]);
+
+  const setValue = (value: T) => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+      setStoredValue(value);
+      window.dispatchEvent(new Event(`${key}-updated`));
+    } catch (error) {
+      // handle error
     }
-  }
+  };
 
-  return { subscribe, getSnapshot, setState }
+  return [storedValue, setValue] as const;
 }
 
-export const useLocalStorage = <T,>(key: string, initialValue: T) => {
-  const { subscribe, getSnapshot, setState } = useMemo(
-    () => syncedLocalStorage(key, initialValue),
-    []
-  )
-
-  const state = useSyncExternalStore(subscribe, getSnapshot)
-
-  return [state, setState] as const
-}
+// Usage for teams:
+// const [teams, setTeams] = useLocalStorage<Team[]>('teams', []);
+// This will now update in all windows/tabs and all components using this hook.

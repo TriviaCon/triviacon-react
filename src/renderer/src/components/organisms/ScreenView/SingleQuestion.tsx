@@ -8,7 +8,10 @@ import {
 import { useLocalStorage } from '@renderer/hooks/useLocalStorage'
 
 /* @ts-ignore-next-line need to do the generics magic in ScreenView.tsx ¯\_(ツ)_/¯ */
-const SingleQuestionView: React.FC = ({ question, hints }: StateQuestion['data']) => {
+const SingleQuestionView: React.FC = () => {
+  const question = JSON.parse(localStorage.getItem('currentQuestion') || 'null');
+  const hints = JSON.parse(localStorage.getItem('currentHints') || '[]');
+  if (!question) return <div>No question selected.</div>;
   const [revealedAnswers] = useLocalStorage<number[]>(RevealedAnswersStorageKey, [])
   const [revealedHints] = useLocalStorage<number[]>(RevealedHintsStorageKey, [])
   return (

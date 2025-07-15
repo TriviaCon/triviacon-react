@@ -134,6 +134,13 @@ app.whenReady().then(() => {
     return fileContent
   })
 
+  ipcMain.handle('set-quiz-view', (_event, view: string) => {
+    if (quizViewWindow && !quizViewWindow.isDestroyed()) {
+      quizViewWindow.webContents.send('set-quiz-view', view);
+      console.log('Main received set-quiz-view:', view)
+    }
+  });
+
   registerIpcHandlers(ipcMain)
 
   createWindow()
