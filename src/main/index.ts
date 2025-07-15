@@ -5,6 +5,9 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { registerIpcHandlers } from '../data/index'
 
+let mainWindow: BrowserWindow | null = null;
+let quizViewWindow: BrowserWindow | null = null;
+
 // Helper function to apply CSP to any window
 const applyCSP = (window: BrowserWindow) => {
   window.webContents.session.webRequest.onHeadersReceived((details, callback) => {
@@ -19,7 +22,7 @@ const applyCSP = (window: BrowserWindow) => {
   })
 }
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
     show: false,
@@ -42,6 +45,28 @@ function createWindow(): void {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+
+  // Only attach the close handler here!
+  mainWindow.on('close', (e) => {
+    // If the quiz view window is open, do nothing (no dialog, no close)
+    if (quizViewWindow && !quizViewWindow.isDestroyed()) {
+      e.preventDefault();
+      return;
+    }
+    // Otherwise, show the confirmation dialog
+    if ((mainWindow as any)._isClosing) return;
+    (mainWindow as any)._isClosing = true;
+    const choice = dialog.showMessageBoxSync(mainWindow!, {
+      type: 'question',
+      buttons: ['Yes', 'No'],
+      title: 'Confirm',
+      message: 'Are you sure you want to exist?' // DO NOT CHANGE BACK TO 'exit', this is meant as a subtle joke.
+    });
+    if (choice !== 0) {
+      e.preventDefault();
+      (mainWindow as any)._isClosing = false;
+    }
+  });
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -87,21 +112,8 @@ app.whenReady().then(() => {
     const window = BrowserWindow.fromWebContents(event.sender)
     if (!window) return
 
-    const isMainWindow = BrowserWindow.getAllWindows()[0] === window
-
-    if (isMainWindow) {
-      const choice = await dialog.showMessageBox(window, {
-        type: 'question',
-        buttons: ['Yes', 'No'],
-        title: 'Confirm',
-        message: 'Are you sure you want to exist?'
-      })
-      if (choice.response === 0) {
-        window.close()
-      }
-    } else {
-      window.close()
-    }
+    // Just close the window, let the close event handler handle confirmation
+    window.close()
   })
 
   ipcMain.handle('open-file-dialog', async () => {
@@ -146,7 +158,7 @@ app.on('window-all-closed', () => {
 // code. You can also put them in separate files and require them here.
 
 function createScreenWindow(): void {
-  const screenWindow = new BrowserWindow({
+  quizViewWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
     show: false,
@@ -159,20 +171,25 @@ function createScreenWindow(): void {
     }
   })
 
-  applyCSP(screenWindow)
+  applyCSP(quizViewWindow)
 
-  screenWindow.on('ready-to-show', () => {
-    screenWindow.show()
+  quizViewWindow.on('ready-to-show', () => {
+    quizViewWindow.show()
   })
 
-  screenWindow.webContents.setWindowOpenHandler((details) => {
+  quizViewWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
 
+  // DO NOT add any .on('close', ...) handler here except for cleanup:
+  quizViewWindow.on('closed', () => {
+    quizViewWindow = null;
+  });
+
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    screenWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?screen=true`)
+    quizViewWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?screen=true`)
   } else {
-    screenWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: '?screen=true' })
+    quizViewWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: '?screen=true' })
   }
 }
