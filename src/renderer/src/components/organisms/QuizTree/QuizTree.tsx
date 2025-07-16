@@ -56,7 +56,11 @@ const QuizTree: React.FC<QuizTreeProps> = ({
                 setSelectedQuestion(null)
               }}
               onSelectQuestion={(id) => setSelectedQuestion(id)}
-              onClose={console.log}
+              onClose={() => {
+                setSelectedCategory(null);
+                setSelectedQuestion(null);
+                window.electron.ipcRenderer.invoke('set-quiz-view', 'categories');
+              }}
               editable={editable}
             />
           ))}
