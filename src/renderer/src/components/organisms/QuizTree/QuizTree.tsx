@@ -54,6 +54,7 @@ const QuizTree: React.FC<QuizTreeProps> = ({
               onOpen={() => {
                 setSelectedCategory(category.id)
                 setSelectedQuestion(null)
+                window.electron.ipcRenderer.invoke('set-quiz-view', 'questions');
               }}
               onSelectQuestion={(id) => setSelectedQuestion(id)}
               onClose={() => {
