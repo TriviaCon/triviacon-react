@@ -23,3 +23,11 @@ export interface Hint {
   questionId: number
   hint: string
 }
+
+export type QuizMeta = {
+  location: string
+  author: string
+  name: string
+  date: string
+  splash: string
+}

@@ -4,5 +4,6 @@ export default {
   categories: () => ['categories'],
   questions: (categoryId: number) => ['questions', categoryId],
   question: (questionId: number) => ['question', questionId],
-  hints: (questionId: number) => ['hints', questionId]
+  hints: (questionId: number) => ['hints', questionId],
+  meta: () => ['meta']
 }

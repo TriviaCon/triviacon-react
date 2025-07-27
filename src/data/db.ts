@@ -13,6 +13,7 @@ import { Stats } from '@renderer/types'
 import questions from './questions'
 import categories from './categories'
 import hints from './hints'
+import meta from './meta'
 
 export let db: Database | null = null
 
@@ -123,5 +124,6 @@ export default {
   getStats,
   questions,
   categories,
-  hints
+  hints,
+  meta
 }
