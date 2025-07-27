@@ -5,10 +5,28 @@ import Header from './components/molecules/Header'
 import { Container, Row } from 'react-bootstrap'
 import ScreenView from './components/organisms/ScreenView/ScreenView'
 import ControlView from './components/organisms/ControlView/ControlView'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MutationCache, QueryClient, QueryClientProvider, QueryKey } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-const queryClient = new QueryClient()
+declare module '@tanstack/react-query' {
+  interface Register {
+    mutationMeta: {
+      invalidateQueries?: QueryKey
+    }
+  }
+}
+
+const queryClient = new QueryClient({
+  mutationCache: new MutationCache({
+    onSettled: (_data, _error, _variables, _context, mutation) => {
+      if (mutation.meta?.invalidateQueries) {
+        queryClient.invalidateQueries({
+          queryKey: mutation.meta.invalidateQueries
+        })
+      }
+    }
+  })
+})
 
 function App(): JSX.Element {
   const isScreen = useMemo(
