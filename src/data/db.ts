@@ -20,7 +20,10 @@ const _new = async (path: string) => {
   dbg('Creating new database', path)
   db = await open({ filename: path, driver: (await sqlite()).Database })
   db.on('trace', dbg)
-  db.exec('CREATE TABLE IF NOT EXISTS meta(data TEXT)')
+  db.exec(`CREATE TABLE IF NOT EXISTS meta(
+          key TEXT not null constraint meta_pk primary key,
+          value TEXT
+  )`)
 
   // Create Categories table
   db.exec(`
