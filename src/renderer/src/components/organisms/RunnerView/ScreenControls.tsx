@@ -2,14 +2,6 @@ import { Button, Alert } from 'react-bootstrap'
 import { useLocalStorage } from '../../../hooks/useLocalStorage'
 
 const ScreenControls = () => {
-  const [currentView, setCurrentView] = useLocalStorage('currentView', 'start')
-
-  const setQuizView = (view: string) => {
-    console.log('setQuizView called with:', view);
-    window.electron.ipcRenderer.invoke('set-quiz-view', view);
-    setCurrentView(view); // Optionally keep local state in sync
-  };
-
   return (
     <Alert variant="dark" className="d-inline-block p-1">
       <div className="d-flex align-items-center">

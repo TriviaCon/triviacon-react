@@ -3,8 +3,7 @@ import { Card, Col, Container, Row } from 'react-bootstrap'
 import { StateCategories } from '@renderer/hooks/runtime'
 
 /* @ts-ignore-next-line need to do the generics magic in ScreenView.tsx ¯\_(ツ)_/¯ */
-const Categories: React.FC = () => {
-  const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+const Categories: React.FC = ({ categories }: StateCategories['data']) => {
   return (
     <>
       <div style={{ textAlign: 'center' }}>

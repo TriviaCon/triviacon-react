@@ -89,9 +89,9 @@ export const RunnerView = () => {
 
   return (
     <Container fluid className="h-100">
-      <Row>
-        <ScreenControls />
-      </Row>
+      {/* <Row> */}
+      {/*   <ScreenControls /> */}
+      {/* </Row> */}
       <Row>
         <Col sm={4} md={3} className="border-end">
           <TeamTable />

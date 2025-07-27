@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react'
 import { Card } from 'react-bootstrap'
 import Categories from './Categories'
 import SingleQuestionView from './SingleQuestion'
@@ -16,32 +16,19 @@ const viewComponents: Record<RuntimeState['screen'], React.FC> = {
 }
 
 const ScreenView: React.FC = () => {
-  const [currentView, setCurrentView] = useState<RuntimeState['screen']>('start');
-
-  useEffect(() => {
-    // Listen for the IPC event
-    window.electron.ipcRenderer.on('set-quiz-view', (view) => {
-      console.log('ScreenView received set-quiz-view:', view)
-      setCurrentView(view);
-    });
-
-    // Optionally: cleanup
-    return () => {
-      window.electron.ipcRenderer.removeAllListeners('set-quiz-view');
-    };
-  }, []);
+  const { screen, data } = useRuntimeState()
 
   // Use currentView to select the component to render
-  const Component = viewComponents[currentView];
-  console.log('ScreenView currentView:', currentView);
+  const Component = viewComponents[screen]
+  console.log('ScreenView currentView:', screen)
 
   return (
     <Card className="flex-grow-1 d-flex flex-column">
       <Card.Body className="flex-grow-1 d-flex flex-column">
-        {Component ? <Component /> : <div>Unknown view: {currentView}</div>}
+        {Component ? <Component {...data} /> : <div>Unknown view: {screen}</div>}
       </Card.Body>
     </Card>
-  );
-};
+  )
+}
 
 export default ScreenView

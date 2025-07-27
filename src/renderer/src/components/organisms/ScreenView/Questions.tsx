@@ -3,10 +3,7 @@ import React from 'react'
 import { Card, Col, Container, Row } from 'react-bootstrap'
 
 /* @ts-ignore-next-line need to do the generics magic in ScreenView.tsx ¯\_(ツ)_/¯ */
-const Questions: React.FC = () => {
-  const category = JSON.parse(localStorage.getItem('currentCategory') || 'null');
-  const questions = JSON.parse(localStorage.getItem('currentQuestions') || '[]');
-  if (!category) return <div>No category selected.</div>;
+const Questions: React.FC = ({ category, questions }: StateQuestions['data']) => {
   return (
     <>
       <div style={{ textAlign: 'center' }}>

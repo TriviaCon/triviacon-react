@@ -1,19 +1,13 @@
 import React from 'react'
 import { Card, Col, Container, Row, Image } from 'react-bootstrap'
-import {
-  RevealedAnswersStorageKey,
-  RevealedHintsStorageKey,
-  StateQuestion
-} from '@renderer/hooks/runtime'
-import { useLocalStorage } from '@renderer/hooks/useLocalStorage'
+import { StateQuestion } from '@renderer/hooks/runtime'
 
 /* @ts-ignore-next-line need to do the generics magic in ScreenView.tsx ¯\_(ツ)_/¯ */
-const SingleQuestionView: React.FC = () => {
-  const question = JSON.parse(localStorage.getItem('currentQuestion') || 'null');
-  const hints = JSON.parse(localStorage.getItem('currentHints') || '[]');
-  if (!question) return <div>No question selected.</div>;
-  const [revealedAnswers] = useLocalStorage<number[]>(RevealedAnswersStorageKey, [])
-  const [revealedHints] = useLocalStorage<number[]>(RevealedHintsStorageKey, [])
+const SingleQuestionView: React.FC = ({
+  question,
+  hints,
+  answerRevealed
+}: StateQuestion['data']) => {
   return (
     <Container fluid className="justify-content-space-between">
       <Col className="text-center justify-content-space-between">
@@ -24,13 +18,13 @@ const SingleQuestionView: React.FC = () => {
           <h1
             className="display-1"
             style={{
-              visibility: revealedAnswers.includes(question.id) ? 'visible' : 'hidden'
+              visibility: answerRevealed ? 'visible' : 'hidden'
             }}
           >
             <strong>{question?.answer}</strong>
           </h1>
 
-          {revealedHints.includes(question.id) && hints.length > 0 && (
+          {hints.length > 0 && (
             <Row className="mt-3">
               {hints.map((hint, index) => (
                 <Col key={index} xs={12} sm={6} className="mb-3">
