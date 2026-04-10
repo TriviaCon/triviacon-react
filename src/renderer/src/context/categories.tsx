@@ -32,7 +32,8 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
     setCategories([...categories, { id, name }])
   }
 
-  const addQuestion = (id: number) => {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const addQuestion = (_id: number) => {}
 
   const updateCategory = async (id: number, updates: Partial<Category>) => {
     await ipc.db.categories.update(id, updates.name!)

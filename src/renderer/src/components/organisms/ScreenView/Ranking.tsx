@@ -1,7 +1,7 @@
 import React from 'react'
 import { StateRanking } from '@renderer/hooks/runtime'
 
-const RankingView: React.FC = ({ teams }: StateRanking['data']) => {
+const RankingView: React.FC<StateRanking['data']> = ({ teams }) => {
   const sortedTeams = [...teams].sort((a, b) => b.score - a.score)
   return (
     <div style={{ textAlign: 'center' }}>

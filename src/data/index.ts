@@ -1,4 +1,10 @@
-import { IpcMain, IpcRenderer } from 'electron'
+import { IpcMain } from 'electron'
+
+type RendererIpc = {
+  invoke: (channel: string, ...args: any[]) => Promise<any>
+  on: (channel: string, listener: (...args: any[]) => void) => void
+  removeAllListeners: (channel: string) => void
+}
 import db from './db'
 
 export const dbg = console.log
@@ -26,7 +32,7 @@ export const registerIpcHandlers = (ipc: IpcMain, handlersMap: any = handlers, b
 }
 
 export const initRendererIpc = (
-  ipc: IpcRenderer,
+  ipc: RendererIpc,
   handlersMap = handlers,
   base = ''
 ): typeof handlers => {

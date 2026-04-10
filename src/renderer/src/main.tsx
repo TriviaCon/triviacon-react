@@ -9,10 +9,10 @@ export const ipc = initRendererIpc(window.electron.ipcRenderer)
 
 // Only import and attach devtools in development
 if (import.meta.env.DEV) {
-  import('./devtools').then(devtools => {
-    (window as any).populateTT = devtools.populateTT;
+  import('./devtools').then((devtools) => {
+    ;(window as any).populateTT = devtools.populateTT
     // Attach more helpers as needed
-  });
+  })
 }
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

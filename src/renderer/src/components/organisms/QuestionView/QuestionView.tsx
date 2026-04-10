@@ -102,7 +102,7 @@ const QuestionView = ({ id }: { id: number }) => {
             <Form.Control
               type="text"
               id="media"
-              value={question.data.media}
+              value={question.data.media ?? ''}
               onChange={(e) => update({ media: e.target.value })}
             />
           </Card.Body>

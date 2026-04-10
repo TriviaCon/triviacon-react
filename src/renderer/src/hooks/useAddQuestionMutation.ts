@@ -3,5 +3,5 @@ import { useMutation } from '@tanstack/react-query'
 
 export const useAddQuestionMutation = (categoryId: number) =>
   useMutation({
-    mutationFn: () => ipc.db.questions.create({ categoryId })
+    mutationFn: () => ipc.db.questions.create({ categoryId, text: '', answer: '', media: null })
   })

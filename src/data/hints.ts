@@ -19,22 +19,14 @@ const create = async (questionId: number, hint: string = ''): Promise<number> =>
   return result.lastID // Return the ID of the newly created hint
 }
 
-// Read all hints
 const all = async (): Promise<Hint[]> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
-
+  if (!db) return []
   const hints = await db.all('SELECT id, hint, questionId FROM Hints')
   return hints as Hint[]
 }
 
-// Read hints by question ID
 const byQuestionId = async (questionId: number): Promise<Hint[]> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
-
+  if (!db) return []
   const hint = await db.all(
     'SELECT id, hint, questionId FROM Hints WHERE questionId = ?',
     questionId

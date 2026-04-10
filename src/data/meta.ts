@@ -1,12 +1,9 @@
 import { db } from './db'
 
 const getMetaValues = async (keys: string[]): Promise<Record<string, string | undefined>> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
+  if (!db) return {}
   const inHelper = keys.map((k) => `"${k}"`).join(',')
   const result = await db.all(`SELECT key, value FROM meta WHERE key IN (${inHelper})`)
-  console.log(result)
   return result.reduce((pv, cv) => ({ ...pv, [cv.key]: cv.value }), {})
 }
 
@@ -20,11 +17,11 @@ const updateMeta = async (key: string, value: string) => {
 const get = async () => {
   const meta = await getMetaValues(['author', 'location', 'date', 'name', 'splash'])
   return {
-    author: meta.author,
-    location: meta.location,
-    date: meta.date,
-    name: meta.name,
-    splash: meta.splash
+    author: meta.author ?? '',
+    location: meta.location ?? '',
+    date: meta.date ?? '',
+    name: meta.name ?? '',
+    splash: meta.splash ?? ''
   }
 }
 

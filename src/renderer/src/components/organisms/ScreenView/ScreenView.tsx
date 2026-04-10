@@ -7,7 +7,8 @@ import StartScreen from './Start'
 import Questions from './Questions'
 import { RuntimeState, useRuntimeState } from '@renderer/hooks/runtime'
 
-const viewComponents: Record<RuntimeState['screen'], React.FC> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const viewComponents: Record<RuntimeState['screen'], React.FC<any>> = {
   categories: Categories,
   questions: Questions,
   question: SingleQuestionView,

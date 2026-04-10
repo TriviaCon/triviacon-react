@@ -1,13 +1,13 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import path, { join } from 'path'
 import fs from 'fs'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { registerIpcHandlers } from '../data/index'
-import { installExtension, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+import { installExtension, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 
-let mainWindow: BrowserWindow | null = null;
-let quizViewWindow: BrowserWindow | null = null;
+let mainWindow: BrowserWindow | null = null
+let quizViewWindow: BrowserWindow | null = null
 
 // Helper function to apply CSP to any window
 const applyCSP = (window: BrowserWindow) => {
@@ -39,7 +39,7 @@ function createWindow(): void {
   applyCSP(mainWindow)
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow?.show()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -51,27 +51,27 @@ function createWindow(): void {
   mainWindow.on('close', (e) => {
     // If the quiz view window is open, do nothing (no dialog, no close)
     if (quizViewWindow && !quizViewWindow.isDestroyed()) {
-      e.preventDefault();
-      return;
+      e.preventDefault()
+      return
     }
     // Otherwise, show the confirmation dialog
-    if ((mainWindow as any)._isClosing) return;
-    (mainWindow as any)._isClosing = true;
+    if ((mainWindow as any)._isClosing) return
+    ;(mainWindow as any)._isClosing = true
     const choice = dialog.showMessageBoxSync(mainWindow!, {
       type: 'question',
       buttons: ['Yes', 'No'],
       title: 'Confirm',
       message: 'Are you sure you want to exist?' // DO NOT CHANGE BACK TO 'exit', this is meant as a subtle joke.
-    });
+    })
     if (choice !== 0) {
-      e.preventDefault();
-      (mainWindow as any)._isClosing = false;
+      e.preventDefault()
+      ;(mainWindow as any)._isClosing = false
     }
-  });
+  })
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+  if (process.env['ELECTRON_RENDERER_URL']) {
     const searchParam = process.env['SCREEN_PARAM']
       ? `?screen=${encodeURIComponent(process.env['SCREEN_PARAM'])}`
       : ''
@@ -92,7 +92,7 @@ app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
   installExtension(REACT_DEVELOPER_TOOLS)
     .then((ext) => console.log(`Added Extension:  ${ext.name}`))
-    .catch((err) => console.log('An error occurred: ', err));
+    .catch((err) => console.log('An error occurred: ', err))
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -140,10 +140,10 @@ app.whenReady().then(() => {
 
   ipcMain.handle('set-quiz-view', (_event, view: string) => {
     if (quizViewWindow && !quizViewWindow.isDestroyed()) {
-      quizViewWindow.webContents.send('set-quiz-view', view);
+      quizViewWindow.webContents.send('set-quiz-view', view)
       console.log('Main received set-quiz-view:', view)
     }
-  });
+  })
 
   registerIpcHandlers(ipcMain)
 
@@ -185,7 +185,7 @@ function createScreenWindow(): void {
   applyCSP(quizViewWindow)
 
   quizViewWindow.on('ready-to-show', () => {
-    quizViewWindow.show()
+    quizViewWindow?.show()
   })
 
   quizViewWindow.webContents.setWindowOpenHandler((details) => {
@@ -195,10 +195,10 @@ function createScreenWindow(): void {
 
   // DO NOT add any .on('close', ...) handler here except for cleanup:
   quizViewWindow.on('closed', () => {
-    quizViewWindow = null;
-  });
+    quizViewWindow = null
+  })
 
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+  if (process.env['ELECTRON_RENDERER_URL']) {
     quizViewWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?screen=true`)
   } else {
     quizViewWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: '?screen=true' })

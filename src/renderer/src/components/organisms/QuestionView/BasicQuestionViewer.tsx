@@ -40,14 +40,17 @@ const BasicQuestionViewer = ({
           <Card className="mb-2">
             <Card.Body>
               <Row>
-                <Col>
-                  <img src={question.media} />
-                </Col>
+                <Col>{question.media && <img src={question.media} />}</Col>
                 <Col className="border-start">
                   Controls
                   <Row>
                     <Col>
-                      <ToggleButton type="checkbox" variant="secondary" value="1">
+                      <ToggleButton
+                        id="fullscreen-toggle"
+                        type="checkbox"
+                        variant="secondary"
+                        value="1"
+                      >
                         Fullscreen
                       </ToggleButton>
                     </Col>

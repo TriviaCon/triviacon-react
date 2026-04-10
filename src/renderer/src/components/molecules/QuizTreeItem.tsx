@@ -55,8 +55,7 @@ const CategoriesAccordionItem = ({
     <Accordion.Item eventKey={`${category.id}`}>
       <Accordion.Header onClick={onOpen}>
         <strong>
-          {category.name} ({questions.filter((question) => question.used === false).length}/
-          {questions.length})
+          {category.name} ({questions.length})
         </strong>
       </Accordion.Header>
       <Accordion.Body onExited={onClose}>

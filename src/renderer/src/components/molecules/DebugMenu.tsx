@@ -1,5 +1,4 @@
 import React from 'react'
-import { useCategories } from '../../hooks/useCategories'
 import { Dropdown } from 'react-bootstrap'
 import { Bug, ExclamationTriangleFill, Github, QuestionOctagon, Trash } from 'react-bootstrap-icons'
 

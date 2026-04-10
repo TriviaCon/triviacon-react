@@ -102,9 +102,7 @@ const convertJson = async () => {
 }
 
 const getStats = async (): Promise<Stats> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
+  if (!db) return { totalQuestions: 0, questionsWithMedia: 0 }
 
   const totalQuestions = await db.get('SELECT COUNT(*) as count FROM Questions')
   const questionsWithMedia = await db.get(

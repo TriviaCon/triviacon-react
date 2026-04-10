@@ -1,5 +1,4 @@
 import { Row, Col, Container } from 'react-bootstrap'
-import ScreenControls from './ScreenControls'
 import TeamTable from '../TeamTable/TeamTable'
 import QuizTree from '../QuizTree/QuizTree'
 import { useCategories } from '../../../hooks/useCategories'
@@ -83,7 +82,7 @@ export const RunnerView = () => {
     setSelectedQuestionId(id)
     transition({
       screen: 'question',
-      data: { question, hints, answerRevealed: true }
+      data: { question: question!, hints: hints ?? [], answerRevealed: true }
     })
   }
 

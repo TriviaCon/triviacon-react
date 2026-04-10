@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { CategoriesProvider } from './context/categories'
 import Header from './components/molecules/Header'
 import { Container, Row } from 'react-bootstrap'
 import ScreenView from './components/organisms/ScreenView/ScreenView'
@@ -37,15 +36,13 @@ function App(): JSX.Element {
   return (
     <Container fluid className="px-1 py-1 d-flex flex-column">
       <QueryClientProvider client={queryClient}>
-        <CategoriesProvider>
-          <Row>
-            <Header isScreen={isScreen} />
-          </Row>
-          <Row className="flex-grow-1 d-flex flex-column mx-0">
-            {isScreen ? <ScreenView /> : <ControlView />}
-          </Row>
-        </CategoriesProvider>
-        <ReactQueryDevtools initialIsOpen={true} />
+        <Row>
+          <Header isScreen={isScreen} />
+        </Row>
+        <Row className="flex-grow-1 d-flex flex-column mx-0">
+          {isScreen ? <ScreenView /> : <ControlView />}
+        </Row>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </Container>
   )
