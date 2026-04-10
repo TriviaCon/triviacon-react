@@ -1,22 +1,32 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { useGameState } from './hooks/useGameState'
+import { GamePhase } from '@shared/types/state'
+import IdleScreen from './components/IdleScreen'
+import CategoriesScreen from './components/CategoriesScreen'
+import QuestionsScreen from './components/QuestionsScreen'
+import QuestionScreen from './components/QuestionScreen'
+import RankingScreen from './components/RankingScreen'
 
 function App(): JSX.Element {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#1a1a2e',
-        color: '#e0e0e0'
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>TriviaCON</h1>
-        <p style={{ fontSize: '1.25rem', opacity: 0.7 }}>Waiting for game data...</p>
-      </div>
-    </div>
-  )
+  const gameState = useGameState()
+
+  switch (gameState.phase) {
+    case GamePhase.Categories:
+      return <CategoriesScreen categories={gameState.categories} />
+    case GamePhase.Questions:
+      return (
+        <QuestionsScreen
+          categories={gameState.categories}
+          currentCategoryId={gameState.currentCategoryId}
+        />
+      )
+    case GamePhase.Question:
+      return <QuestionScreen activeQuestion={gameState.activeQuestion} />
+    case GamePhase.Ranking:
+      return <RankingScreen teams={gameState.teams} />
+    default:
+      return <IdleScreen quizMeta={gameState.quizMeta} />
+  }
 }
+
 export default App

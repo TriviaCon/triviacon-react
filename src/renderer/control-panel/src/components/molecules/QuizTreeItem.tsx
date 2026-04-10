@@ -1,7 +1,7 @@
 import { useAddQuestionMutation } from '@renderer/hooks/useAddQuestionMutation'
 import useCategoryQuestions from '@renderer/hooks/useCategoryQuestions'
 import { useDeleteCategoryMutation } from '@renderer/hooks/useDeleteCategoryMutation'
-import { Category } from '@renderer/types'
+import { Category } from '@shared/types/quiz'
 import { useState } from 'react'
 import { Accordion, Button, Form } from 'react-bootstrap'
 import { CameraFill, PlusLg, Trash } from 'react-bootstrap-icons'

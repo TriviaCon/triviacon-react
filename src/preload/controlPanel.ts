@@ -70,6 +70,32 @@ const api = {
   // ── Stats ──────────────────────────────────────────────────────
   quizStats: (): Promise<unknown> => ipcRenderer.invoke(IPC.QUIZ_STATS),
 
+  // ── Team management ─────────────────────────────────────────────
+  addTeam: (name: string): Promise<void> => ipcRenderer.invoke(IPC.GAME_ADD_TEAM, name),
+  removeTeam: (teamId: string): Promise<void> => ipcRenderer.invoke(IPC.GAME_REMOVE_TEAM, teamId),
+  renameTeam: (teamId: string, name: string): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_RENAME_TEAM, teamId, name),
+  updateScore: (teamId: string, delta: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_UPDATE_SCORE, teamId, delta),
+  setCurrentTeam: (teamId: string): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_SET_CURRENT_TEAM, teamId),
+  nextTeam: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_NEXT_TEAM),
+  prevTeam: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_PREV_TEAM),
+
+  // ── Screen transitions ─────────────────────────────────────────
+  showCategories: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_SHOW_CATEGORIES),
+  showQuestions: (categoryId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_SHOW_QUESTIONS, categoryId),
+  showQuestion: (questionId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_SHOW_QUESTION, questionId),
+  showRanking: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_SHOW_RANKING),
+
+  // ── Question state ─────────────────────────────────────────────
+  toggleAnswer: (questionId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_TOGGLE_ANSWER, questionId),
+  markUsed: (questionId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_MARK_USED, questionId),
+
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),
   toggleGameFullscreen: (): Promise<boolean> =>

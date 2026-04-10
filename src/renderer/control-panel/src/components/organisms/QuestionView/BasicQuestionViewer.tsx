@@ -1,4 +1,4 @@
-import { AnswerOption, Question } from '@renderer/types'
+import { AnswerOption, Question } from '@shared/types/quiz'
 import { Alert, Card, Col, Container, Form, Row, ToggleButton } from 'react-bootstrap'
 
 const BasicQuestionViewer = ({

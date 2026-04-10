@@ -1,7 +1,7 @@
 import React, { FormEvent } from 'react'
 import { Accordion, Button, Form } from 'react-bootstrap'
 import CategoriesAccordionItem from '@renderer/components/molecules/QuizTreeItem'
-import { Category } from '@renderer/types'
+import { Category } from '@shared/types/quiz'
 import { useAddCategoryMutation } from '@renderer/hooks/useAddCategoryMutation'
 
 const AddCategoryForm = () => {

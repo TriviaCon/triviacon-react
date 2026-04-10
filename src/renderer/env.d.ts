@@ -61,6 +61,25 @@ declare global {
       // --- Stats ---
       quizStats: () => Promise<Stats>
 
+      // --- Team management ---
+      addTeam: (name: string) => Promise<void>
+      removeTeam: (teamId: string) => Promise<void>
+      renameTeam: (teamId: string, name: string) => Promise<void>
+      updateScore: (teamId: string, delta: number) => Promise<void>
+      setCurrentTeam: (teamId: string) => Promise<void>
+      nextTeam: () => Promise<void>
+      prevTeam: () => Promise<void>
+
+      // --- Screen transitions ---
+      showCategories: () => Promise<void>
+      showQuestions: (categoryId: number) => Promise<void>
+      showQuestion: (questionId: number) => Promise<void>
+      showRanking: () => Promise<void>
+
+      // --- Question state ---
+      toggleAnswer: (questionId: number) => Promise<void>
+      markUsed: (questionId: number) => Promise<void>
+
       // --- Display management (control panel only) ---
       openGameScreen: () => Promise<void>
       toggleGameFullscreen: () => Promise<boolean>

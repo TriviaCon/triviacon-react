@@ -2,17 +2,14 @@ import { Row, Col, Container } from 'react-bootstrap'
 import TeamTable from '../TeamTable/TeamTable'
 import QuizTree from '../QuizTree/QuizTree'
 import { useCategories } from '../../../hooks/useCategories'
-import { useRuntimeControls } from '@renderer/hooks/runtime'
-import { useQueryClient } from '@tanstack/react-query'
-import { questionsQuery } from '@renderer/hooks/useCategoryQuestions'
-import { categoryQuery } from '@renderer/hooks/useCategory'
-import { questionQuery, useQuestion } from '@renderer/hooks/useQuestion'
-import { answerOptionsQuery, useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
+import { useGameState } from '@renderer/hooks/useGameState'
+import { useQuestion } from '@renderer/hooks/useQuestion'
+import { useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
 import BasicQuestionViewer from '../QuestionView/BasicQuestionViewer'
 import { useState } from 'react'
 
 const QuestionColumn = ({ id }: { id: number }) => {
-  const { toggleAnswer, toggleUsed, revealedAnswers, used } = useRuntimeControls()
+  const gameState = useGameState()
   const question = useQuestion(id)
   const answerOptions = useAnswerOptions(id)
 
@@ -24,17 +21,15 @@ const QuestionColumn = ({ id }: { id: number }) => {
     <BasicQuestionViewer
       question={question.data}
       answerOptions={answerOptions.data}
-      answerRevealed={revealedAnswers.includes(id)}
-      onRevealAnswer={() => toggleAnswer(id)}
-      used={used.includes(id)}
-      onUse={() => toggleUsed(id)}
+      answerRevealed={gameState.revealedAnswers.includes(id)}
+      onRevealAnswer={() => window.api.toggleAnswer(id)}
+      used={gameState.usedQuestions.includes(id)}
+      onUse={() => window.api.markUsed(id)}
     />
   )
 }
 
 export const RunnerView = () => {
-  const queryClient = useQueryClient()
-  const { transition } = useRuntimeControls()
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null)
   const categories = useCategories()
 
@@ -42,52 +37,20 @@ export const RunnerView = () => {
     return
   }
 
-  const handleCategoryClicked = async (id: number | null) => {
-    if (!id) {
-      return
-    }
-
-    const [category, questions] = await Promise.all([
-      queryClient.fetchQuery(categoryQuery(id)),
-      queryClient.fetchQuery(questionsQuery(id))
-    ])
-
-    if (!category) {
-      throw new Error(`Category ${id} not found`)
-    }
-
+  const handleCategoryClicked = (id: number | null) => {
+    if (!id) return
     setSelectedQuestionId(null)
-    transition({
-      screen: 'questions',
-      data: {
-        category,
-        questions
-      }
-    })
+    window.api.showQuestions(id)
   }
 
-  const handleQuestionClicked = async (id: number | null) => {
-    if (!id) {
-      return
-    }
-
-    const [question, answerOptions] = await Promise.all([
-      queryClient.fetchQuery(questionQuery(id)),
-      queryClient.fetchQuery(answerOptionsQuery(id))
-    ])
-
+  const handleQuestionClicked = (id: number | null) => {
+    if (!id) return
     setSelectedQuestionId(id)
-    transition({
-      screen: 'question',
-      data: { question: question!, answerOptions: answerOptions ?? [], answerRevealed: true }
-    })
+    window.api.showQuestion(id)
   }
 
   return (
     <Container fluid className="h-100">
-      {/* <Row> */}
-      {/*   <ScreenControls /> */}
-      {/* </Row> */}
       <Row>
         <Col sm={4} md={3} className="border-end">
           <TeamTable />

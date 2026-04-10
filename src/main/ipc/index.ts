@@ -1,4 +1,4 @@
-import { ipcMain, dialog } from 'electron'
+import { BrowserWindow, ipcMain, dialog } from 'electron'
 import { IPC } from '@shared/types/ipc'
 import { QUIZ_FILE_FILTER } from '@shared/constants'
 import db from '../../data/db'
@@ -6,6 +6,22 @@ import categories from '../../data/categories'
 import questions from '../../data/questions'
 import answerOptions from '../../data/answerOptions'
 import meta from '../../data/meta'
+import { GameEngine } from '../state/GameEngine'
+import { getControlPanelWindow, getGameScreenWindow } from '../windows'
+
+const engine = new GameEngine()
+
+function safeSend(win: BrowserWindow | null, channel: string, ...args: unknown[]): void {
+  if (win && !win.isDestroyed()) {
+    win.webContents.send(channel, ...args)
+  }
+}
+
+function broadcastState(): void {
+  const state = engine.getState()
+  safeSend(getControlPanelWindow(), IPC.STATE_UPDATE, state)
+  safeSend(getGameScreenWindow(), IPC.STATE_UPDATE, state)
+}
 
 export function registerIpcHandlers(): void {
   // ── File operations ──────────────────────────────────────────────
@@ -16,6 +32,10 @@ export function registerIpcHandlers(): void {
     })
     if (result.canceled || !result.filePath) return null
     await db.new(result.filePath)
+    const quizMeta = await meta.get()
+    const cats = await categories.all()
+    engine.loadQuiz(result.filePath, quizMeta, cats)
+    broadcastState()
     return result.filePath
   })
 
@@ -27,6 +47,10 @@ export function registerIpcHandlers(): void {
     if (result.canceled || result.filePaths.length === 0) return null
     const filePath = result.filePaths[0]
     await db.open(filePath)
+    const quizMeta = await meta.get()
+    const cats = await categories.all()
+    engine.loadQuiz(filePath, quizMeta, cats)
+    broadcastState()
     return filePath
   })
 
@@ -50,13 +74,24 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.QUIZ_CATEGORY_BY_ID, (_, id: number) => categories.byId(id))
 
-  ipcMain.handle(IPC.QUIZ_CATEGORY_CREATE, (_, name: string) => categories.create(name))
+  ipcMain.handle(IPC.QUIZ_CATEGORY_CREATE, async (_, name: string) => {
+    const id = await categories.create(name)
+    engine.updateCategories(await categories.all())
+    broadcastState()
+    return id
+  })
 
-  ipcMain.handle(IPC.QUIZ_CATEGORY_UPDATE, (_, id: number, name: string) =>
-    categories.update(id, name)
-  )
+  ipcMain.handle(IPC.QUIZ_CATEGORY_UPDATE, async (_, id: number, name: string) => {
+    await categories.update(id, name)
+    engine.updateCategories(await categories.all())
+    broadcastState()
+  })
 
-  ipcMain.handle(IPC.QUIZ_CATEGORY_REMOVE, (_, id: number) => categories.remove(id))
+  ipcMain.handle(IPC.QUIZ_CATEGORY_REMOVE, async (_, id: number) => {
+    await categories.remove(id)
+    engine.updateCategories(await categories.all())
+    broadcastState()
+  })
 
   // ── Questions ────────────────────────────────────────────────────
 
@@ -96,19 +131,111 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.QUIZ_META_GET, () => meta.get())
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_NAME, (_, name: string) => meta.updateName(name))
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_NAME, async (_, name: string) => {
+    await meta.updateName(name)
+    engine.updateMeta(await meta.get())
+    broadcastState()
+  })
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_AUTHOR, (_, author: string) => meta.updateAuthor(author))
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_AUTHOR, async (_, author: string) => {
+    await meta.updateAuthor(author)
+    engine.updateMeta(await meta.get())
+    broadcastState()
+  })
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_DATE, (_, date: string) => meta.updateDate(date))
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_DATE, async (_, date: string) => {
+    await meta.updateDate(date)
+    engine.updateMeta(await meta.get())
+    broadcastState()
+  })
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_LOCATION, (_, location: string) =>
-    meta.updateLocation(location)
-  )
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_LOCATION, async (_, location: string) => {
+    await meta.updateLocation(location)
+    engine.updateMeta(await meta.get())
+    broadcastState()
+  })
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_SPLASH, (_, splash: string) => meta.updateSplash(splash))
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_SPLASH, async (_, splash: string) => {
+    await meta.updateSplash(splash)
+    engine.updateMeta(await meta.get())
+    broadcastState()
+  })
 
   // ── Stats ────────────────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_STATS, () => db.getStats())
+
+  // ── Team management ──────────────────────────────────────────────
+
+  ipcMain.handle(IPC.GAME_ADD_TEAM, (_, name: string) => {
+    engine.addTeam(name)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_REMOVE_TEAM, (_, teamId: string) => {
+    engine.removeTeam(teamId)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_RENAME_TEAM, (_, teamId: string, name: string) => {
+    engine.renameTeam(teamId, name)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_UPDATE_SCORE, (_, teamId: string, delta: number) => {
+    engine.updateScore(teamId, delta)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_SET_CURRENT_TEAM, (_, teamId: string) => {
+    engine.setCurrentTeam(teamId)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_NEXT_TEAM, () => {
+    engine.nextTeam()
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_PREV_TEAM, () => {
+    engine.prevTeam()
+    broadcastState()
+  })
+
+  // ── Screen transitions ───────────────────────────────────────────
+
+  ipcMain.handle(IPC.GAME_SHOW_CATEGORIES, () => {
+    engine.showCategories()
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_SHOW_QUESTIONS, (_, categoryId: number) => {
+    engine.showQuestions(categoryId)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_SHOW_QUESTION, async (_, questionId: number) => {
+    const question = await questions.byId(questionId)
+    if (!question) return
+    const opts = await answerOptions.byQuestionId(questionId)
+    engine.showQuestion(question, opts)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_SHOW_RANKING, () => {
+    engine.showRanking()
+    broadcastState()
+  })
+
+  // ── Question state ───────────────────────────────────────────────
+
+  ipcMain.handle(IPC.GAME_TOGGLE_ANSWER, (_, questionId: number) => {
+    engine.toggleAnswer(questionId)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_MARK_USED, (_, questionId: number) => {
+    engine.markUsed(questionId)
+    broadcastState()
+  })
 }

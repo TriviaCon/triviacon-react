@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import Logo from '../atoms/logo'
 import './Header.css'
 import { Button, Container, Navbar } from 'react-bootstrap'
-import { useLocalStorage } from '../../hooks/useLocalStorage'
+import { useGameState } from '@renderer/hooks/useGameState'
 import { QuestionCircleFill, XLg } from 'react-bootstrap-icons'
 import DebugMenu from './DebugMenu'
 import { CreditsModal } from './CreditsModal'
 
 const Header: React.FC<{ isScreen: boolean }> = ({ isScreen }) => {
-  const [currentTeam] = useLocalStorage<{ name: string } | null>('currentTeam', null)
+  const gameState = useGameState()
+  const currentTeam = gameState.teams.find((t) => t.id === gameState.currentTeamId) ?? null
   const [showCredits, setShowCredits] = useState(false)
 
   return (

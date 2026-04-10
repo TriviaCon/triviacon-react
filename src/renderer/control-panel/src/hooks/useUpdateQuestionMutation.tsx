@@ -1,4 +1,4 @@
-import { Question } from '@renderer/types'
+import { Question } from '@shared/types/quiz'
 import keys from '@renderer/utils/keys'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
