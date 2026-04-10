@@ -20,10 +20,10 @@ export const IPC = {
   QUIZ_QUESTION_UPDATE: 'quiz:question:update',
   QUIZ_QUESTION_DELETE: 'quiz:question:delete',
 
-  QUIZ_HINTS_BY_QUESTION: 'quiz:hints:byQuestion',
-  QUIZ_HINT_CREATE: 'quiz:hint:create',
-  QUIZ_HINT_UPDATE: 'quiz:hint:update',
-  QUIZ_HINT_REMOVE: 'quiz:hint:remove',
+  QUIZ_ANSWER_OPTIONS_BY_QUESTION: 'quiz:answerOptions:byQuestion',
+  QUIZ_ANSWER_OPTION_CREATE: 'quiz:answerOption:create',
+  QUIZ_ANSWER_OPTION_UPDATE: 'quiz:answerOption:update',
+  QUIZ_ANSWER_OPTION_REMOVE: 'quiz:answerOption:remove',
 
   QUIZ_META_GET: 'quiz:meta:get',
   QUIZ_META_UPDATE_NAME: 'quiz:meta:updateName',
@@ -51,7 +51,6 @@ export const IPC = {
 
   // Question state
   GAME_TOGGLE_ANSWER: 'game:toggleAnswer',
-  GAME_TOGGLE_HINTS: 'game:toggleHints',
   GAME_MARK_USED: 'game:markUsed',
 
   // State push (main -> both renderers)

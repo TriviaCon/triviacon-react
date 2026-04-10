@@ -1,5 +1,5 @@
 import { db } from './db'
-import { Category } from '@renderer/types'
+import type { Category } from '@shared/types/quiz'
 
 const create = async (name: string): Promise<number> => {
   if (!db) throw new Error('No quiz loaded')

@@ -1,10 +1,10 @@
-import { Question } from '@renderer/types'
+import type { Question } from '@shared/types/quiz'
 import { db } from './db'
 
 const allByCategoryId = async (categoryId: number): Promise<Question[]> => {
   if (!db) return []
   const questions = await db.all(
-    'SELECT id, text, answer, media FROM Questions WHERE categoryId = ?',
+    'SELECT id, categoryId, type, text, media FROM Questions WHERE categoryId = ?',
     categoryId
   )
   return questions
@@ -12,51 +12,45 @@ const allByCategoryId = async (categoryId: number): Promise<Question[]> => {
 
 const byId = async (id: number): Promise<Question | null> => {
   if (!db) return null
-  const question = await db.get('SELECT id, text, answer, media FROM Questions WHERE id = ?', id)
+  const question = await db.get(
+    'SELECT id, categoryId, type, text, media FROM Questions WHERE id = ?',
+    id
+  )
   return question || null
 }
 
-const update = async (id: number, updates: Partial<Question>): Promise<void> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
+const update = async (id: number, updates: Partial<Omit<Question, 'id'>>): Promise<void> => {
+  if (!db) throw new Error('No quiz loaded')
 
   const fields = Object.keys(updates)
   const values = Object.values(updates)
 
-  if (fields.length === 0) {
-    throw new Error('No fields to update')
-  }
+  if (fields.length === 0) throw new Error('No fields to update')
 
   const setClause = fields.map((field) => `${field} = ?`).join(', ')
-  const query = `UPDATE Questions SET ${setClause} WHERE id = ?`
-
-  await db.run(query, ...values, id)
+  await db.run(`UPDATE Questions SET ${setClause} WHERE id = ?`, ...values, id)
 }
 
 const _delete = async (id: number): Promise<void> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
+  if (!db) throw new Error('No quiz loaded')
 
-  const deleteStmt = await db.prepare('DELETE FROM Questions WHERE id = ?')
-  await deleteStmt.run(id)
-  await deleteStmt.finalize()
+  // Delete associated answer options first
+  await db.run('DELETE FROM AnswerOptions WHERE questionId = ?', id)
+  await db.run('DELETE FROM Questions WHERE id = ?', id)
 }
 
-const create = async (question: Omit<Question, 'id'>): Promise<void> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
+const create = async (question: Omit<Question, 'id'>): Promise<number> => {
+  if (!db) throw new Error('No quiz loaded')
 
-  const { text, answer, media, categoryId } = question
-  await db.run(
-    'INSERT INTO Questions (text, answer, media, categoryId) VALUES (?, ?, ?, ?)',
+  const { categoryId, type, text, media } = question
+  const result = await db.run(
+    'INSERT INTO Questions (categoryId, type, text, media) VALUES (?, ?, ?, ?)',
+    categoryId,
+    type,
     text,
-    answer,
-    media,
-    categoryId
+    media
   )
+  return result.lastID!
 }
 
 export default {

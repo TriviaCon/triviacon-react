@@ -17,15 +17,31 @@ export default defineConfig({
       alias: {
         '@shared': resolve('src/shared')
       }
+    },
+    build: {
+      rollupOptions: {
+        input: {
+          controlPanel: resolve(__dirname, 'src/preload/controlPanel.ts'),
+          gameScreen: resolve(__dirname, 'src/preload/gameScreen.ts')
+        }
+      }
     }
   },
   renderer: {
+    plugins: [react()],
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src'),
+        '@renderer': resolve('src/renderer/control-panel/src'),
         '@shared': resolve('src/shared')
       }
     },
-    plugins: [react()]
+    build: {
+      rollupOptions: {
+        input: {
+          controlPanel: resolve(__dirname, 'src/renderer/control-panel/index.html'),
+          gameScreen: resolve(__dirname, 'src/renderer/game-screen/index.html')
+        }
+      }
+    }
   }
 })

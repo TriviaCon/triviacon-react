@@ -1,4 +1,4 @@
-import type { Category, Hint, Question, QuizMeta, Team } from './quiz'
+import type { AnswerOption, Category, Question, QuizMeta, Team } from './quiz'
 
 export enum GamePhase {
   Idle = 'idle',
@@ -11,9 +11,8 @@ export enum GamePhase {
 
 export interface ActiveQuestionState {
   question: Question
-  hints: Hint[]
+  answerOptions: AnswerOption[]
   answerRevealed: boolean
-  hintsRevealed: boolean
 }
 
 export interface GameState {
@@ -23,7 +22,6 @@ export interface GameState {
   currentCategoryId: number | null
   activeQuestion: ActiveQuestionState | null
   revealedAnswers: number[]
-  revealedHints: number[]
   usedQuestions: number[]
   quizMeta: QuizMeta | null
   quizFilePath: string | null

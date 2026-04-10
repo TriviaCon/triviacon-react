@@ -1,11 +1,13 @@
+export type Uuid = string
+
 export type QuestionType = 'multiple-choice' | 'single-answer' | 'list'
 
-export interface Category {
+export type Category = {
   id: number
   name: string
 }
 
-export interface Question {
+export type Question = {
   id: number
   categoryId: number
   type: QuestionType
@@ -21,21 +23,15 @@ export interface AnswerOption {
   sortOrder: number
 }
 
-export interface QuizMeta {
-  name: string
-  author: string
-  location: string
-  date: string
-  splash: string
-}
-
-export interface Stats {
+export type Stats = {
   totalQuestions: number
   questionsWithMedia: number
 }
 
-export interface Team {
-  id: string
+export type QuizMeta = {
+  location: string
+  author: string
   name: string
-  score: number
+  date: string
+  splash: string
 }

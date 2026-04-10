@@ -8,11 +8,11 @@ export const sqlite = async (): Promise<typeof import('sqlite3')> => {
 }
 
 import { type Database, open } from 'sqlite'
-import { dbg } from '.'
-import { Stats } from '@renderer/types'
+const dbg = console.log
+import type { Stats } from '@shared/types/quiz'
 import questions from './questions'
 import categories from './categories'
-import hints from './hints'
+import answerOptions from './answerOptions'
 import meta from './meta'
 
 export let db: Database | null = null
@@ -39,19 +39,21 @@ const _new = async (path: string) => {
   CREATE TABLE IF NOT EXISTS Questions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     categoryId INTEGER,
+    type TEXT NOT NULL DEFAULT 'single-answer',
     text TEXT,
-    answer TEXT,
     media TEXT,
     FOREIGN KEY(categoryId) REFERENCES Categories(id)
   )
 `)
 
-  // Create Hints table
+  // Create AnswerOptions table
   db.exec(`
-  CREATE TABLE IF NOT EXISTS Hints (
+  CREATE TABLE IF NOT EXISTS AnswerOptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     questionId INTEGER,
-    hint TEXT,
+    text TEXT,
+    correct INTEGER NOT NULL DEFAULT 0,
+    sortOrder INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY(questionId) REFERENCES Questions(id)
   )
 `)
@@ -82,20 +84,30 @@ const convertJson = async () => {
     for (const question of category.questions) {
       // Insert question
       const questionStmt = await db.prepare(
-        'INSERT INTO Questions (categoryId, text, answer, media) VALUES (?, ?, ?, ?)'
+        'INSERT INTO Questions (categoryId, type, text, media) VALUES (?, ?, ?, ?)'
       )
       const questionResult = await questionStmt.run(
         categoryId,
+        question.type || 'single-answer',
         question.text,
-        question.answer,
         question.media || null
       )
       const questionId = questionResult.lastID
 
-      for (const hint of question.hints) {
-        // Insert hint
-        const hintStmt = await db.prepare('INSERT INTO Hints (questionId, hint) VALUES (?, ?)')
-        await hintStmt.run(questionId, hint)
+      // Legacy: convert old answer+hints format to answerOptions
+      if (question.answer) {
+        const answerStmt = await db.prepare(
+          'INSERT INTO AnswerOptions (questionId, text, correct, sortOrder) VALUES (?, ?, 1, 0)'
+        )
+        await answerStmt.run(questionId, question.answer)
+      }
+      if (question.hints) {
+        for (let i = 0; i < question.hints.length; i++) {
+          const optStmt = await db.prepare(
+            'INSERT INTO AnswerOptions (questionId, text, correct, sortOrder) VALUES (?, ?, 0, ?)'
+          )
+          await optStmt.run(questionId, question.hints[i], i + 1)
+        }
       }
     }
   }
@@ -122,6 +134,6 @@ export default {
   getStats,
   questions,
   categories,
-  hints,
+  answerOptions,
   meta
 }
