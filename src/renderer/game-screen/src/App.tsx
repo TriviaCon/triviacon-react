@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
+import './index.css'
 import { useGameState } from './hooks/useGameState'
 import { GamePhase } from '@shared/types/state'
 import IdleScreen from './components/IdleScreen'

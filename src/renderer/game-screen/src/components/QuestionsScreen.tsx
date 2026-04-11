@@ -1,4 +1,3 @@
-import { Card, Col, Container, Row } from 'react-bootstrap'
 import type { Category } from '@shared/types/quiz'
 
 const QuestionsScreen = ({
@@ -11,23 +10,19 @@ const QuestionsScreen = ({
   const category = categories.find((c) => c.id === currentCategoryId)
 
   return (
-    <Container fluid className="py-4">
-      <div style={{ textAlign: 'center' }}>
-        <h1 className="display-3">{category?.name ?? 'Questions'}</h1>
-        <hr />
+    <div className="w-full py-8 px-6">
+      <div className="text-center mb-6">
+        <h1 className="text-6xl font-bold">{category?.name ?? 'Questions'}</h1>
+        <hr className="border-border mt-4" />
       </div>
-      <Row xs={1} sm={2} md={3} lg={6} className="g-2 justify-content-center align-items-stretch">
-        <Col className="d-flex">
-          <Card className="w-100">
-            <Card.Body className="text-center">
-              <p className="text-muted">
-                Questions are displayed from the control panel.
-              </p>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 justify-items-center">
+        <div className="w-full rounded-lg border border-border bg-card p-4">
+          <p className="text-center text-muted-foreground">
+            Questions are displayed from the control panel.
+          </p>
+        </div>
+      </div>
+    </div>
   )
 }
 

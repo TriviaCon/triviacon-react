@@ -2,28 +2,13 @@ import type { QuizMeta } from '@shared/types/quiz'
 
 const IdleScreen = ({ quizMeta }: { quizMeta: QuizMeta | null }) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#1a1a2e',
-        color: '#e0e0e0'
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
-        <h1 style={{ fontSize: '5rem', marginBottom: '1rem' }}>
-          {quizMeta?.name || 'TriviaCON'}
-        </h1>
-        {quizMeta?.location && <h2 style={{ fontSize: '3rem' }}>{quizMeta.location}</h2>}
-        {quizMeta?.date && <h3 style={{ fontSize: '2rem', opacity: 0.7 }}>{quizMeta.date}</h3>}
-        {quizMeta?.author && (
-          <p style={{ fontSize: '1.5rem', opacity: 0.5 }}>by {quizMeta.author}</p>
-        )}
-        {!quizMeta && (
-          <p style={{ fontSize: '1.25rem', opacity: 0.7 }}>Waiting for game data...</p>
-        )}
+    <div className="flex items-center justify-center h-screen bg-background text-foreground">
+      <div className="text-center">
+        <h1 className="text-[5rem] mb-4 font-bold">{quizMeta?.name || 'TriviaCON'}</h1>
+        {quizMeta?.location && <h2 className="text-[3rem]">{quizMeta.location}</h2>}
+        {quizMeta?.date && <h3 className="text-[2rem] opacity-70">{quizMeta.date}</h3>}
+        {quizMeta?.author && <p className="text-2xl opacity-50">by {quizMeta.author}</p>}
+        {!quizMeta && <p className="text-xl opacity-70">Waiting for game data...</p>}
       </div>
     </div>
   )

@@ -1,0 +1,35 @@
+import { useState } from 'react'
+import QuestionView from './QuestionView'
+import { QuizMeta } from './QuizMeta'
+import QuizTree from './QuizTree'
+import { useCategories } from '@renderer/hooks/useCategories'
+
+type View = { view: 'question'; id: number } | { view: 'category'; id: number } | null
+
+export const BuilderView = () => {
+  const [view, setView] = useState<View>(null)
+  const categories = useCategories()
+
+  if (!categories.data) {
+    return <span className="text-muted-foreground">loading...</span>
+  }
+
+  return (
+    <div className="w-full h-full">
+      <div className="flex gap-4 flex-grow">
+        <div className="flex flex-col h-full w-1/3 min-w-[280px]">
+          <QuizMeta />
+          <QuizTree
+            categories={categories.data ?? []}
+            setSelectedCategory={(id) => (id ? setView({ view: 'category', id }) : setView(null))}
+            setSelectedQuestion={(id) => (id ? setView({ view: 'question', id }) : setView(null))}
+            editable={true}
+          />
+        </div>
+        <div className="flex-1 border-l border-border pl-4">
+          {view?.view === 'question' && <QuestionView id={view.id} />}
+        </div>
+      </div>
+    </div>
+  )
+}

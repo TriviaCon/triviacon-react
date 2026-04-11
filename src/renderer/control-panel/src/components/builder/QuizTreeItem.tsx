@@ -1,0 +1,111 @@
+import { useState } from 'react'
+import { Camera, Plus, Trash2 } from 'lucide-react'
+import { Button } from '@renderer/components/ui/button'
+import { Input } from '@renderer/components/ui/input'
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@renderer/components/ui/accordion'
+import { Category } from '@shared/types/quiz'
+import useCategoryQuestions from '@renderer/hooks/useCategoryQuestions'
+import { useDeleteCategoryMutation } from '@renderer/hooks/useDeleteCategoryMutation'
+import { useAddQuestionMutation } from '@renderer/hooks/useAddQuestionMutation'
+
+const DeleteCategoryButton = ({
+  name,
+  onDelete
+}: {
+  name: string
+  onDelete: () => Promise<unknown>
+}) => {
+  const [pending, setPending] = useState(false)
+  const handleClick = async () => {
+    if (!window.confirm(`Are you sure you want to delete category "${name}" and all its questions?`)) {
+      return
+    }
+    setPending(true)
+    await onDelete()
+    setPending(false)
+  }
+  return (
+    <Button variant="outline" size="icon" className="h-8 w-8 text-destructive border-destructive/50 hover:bg-destructive/10" onClick={handleClick} disabled={pending}>
+      <Trash2 className="h-4 w-4" />
+    </Button>
+  )
+}
+
+const QuizTreeItem = ({
+  category,
+  onOpen,
+  onSelectQuestion,
+  onClose,
+  editable
+}: {
+  category: Category
+  onOpen: VoidFunction
+  onSelectQuestion: (id: number) => void
+  onClose: VoidFunction
+  editable: boolean
+}) => {
+  const { data: questions } = useCategoryQuestions(category.id)
+  const deleteCategoryMutation = useDeleteCategoryMutation(category.id)
+  const addQuestionMutation = useAddQuestionMutation(category.id)
+
+  if (!questions) return null
+
+  return (
+    <AccordionItem value={`${category.id}`}>
+      <AccordionTrigger onClick={onOpen} className="text-sm font-semibold">
+        {category.name} ({questions.length})
+      </AccordionTrigger>
+      <AccordionContent onAnimationEnd={(e) => {
+        if ((e.target as HTMLElement).dataset.state === 'closed') onClose()
+      }}>
+        <div className="flex gap-2 mb-2">
+          <Input
+            readOnly={!editable}
+            name="name"
+            type="text"
+            defaultValue={category.name || ''}
+            onChange={() => alert('todo')}
+          />
+          {editable && (
+            <DeleteCategoryButton
+              name={category.name}
+              onDelete={deleteCategoryMutation.mutateAsync}
+            />
+          )}
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {questions.map((question, index) => (
+            <Button
+              key={question.id}
+              variant="outline"
+              size="sm"
+              onClick={() => onSelectQuestion(question.id)}
+            >
+              {index + 1}
+              <Camera className={`ml-1 h-3 w-3 ${!question.media ? 'opacity-30' : ''}`} />
+            </Button>
+          ))}
+          {editable && (
+            <Button
+              size="sm"
+              onClick={() => {
+                alert(
+                  `Not implemented yet!\nThis will add a new question to \ncategory: ${category.name}\ncID: ${category.id}\n`
+                )
+                addQuestionMutation.mutate()
+              }}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </AccordionContent>
+    </AccordionItem>
+  )
+}
+
+export default QuizTreeItem

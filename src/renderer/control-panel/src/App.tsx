@@ -1,7 +1,5 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
-import Header from './components/molecules/Header'
-import { Container, Row } from 'react-bootstrap'
-import ControlView from './components/organisms/ControlView/ControlView'
+import Header from './components/layout/Header'
+import ControlView from './components/layout/ControlView'
 import { MutationCache, QueryClient, QueryClientProvider, QueryKey } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -27,17 +25,16 @@ const queryClient = new QueryClient({
 
 function App(): JSX.Element {
   return (
-    <Container fluid className="px-1 py-1 d-flex flex-column">
+    <div className="px-1 py-1 flex flex-col h-full">
       <QueryClientProvider client={queryClient}>
-        <Row>
-          <Header isScreen={false} />
-        </Row>
-        <Row className="flex-grow-1 d-flex flex-column mx-0">
+        <Header />
+        <div className="flex-grow flex flex-col">
           <ControlView />
-        </Row>
+        </div>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
-    </Container>
+    </div>
   )
 }
+
 export default App

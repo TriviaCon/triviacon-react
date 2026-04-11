@@ -1,6 +1,8 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
+// @ts-expect-error — @tailwindcss/vite only ships .d.mts; works fine at runtime
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   main: {
@@ -28,7 +30,7 @@ export default defineConfig({
     }
   },
   renderer: {
-    plugins: [react()],
+    plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/control-panel/src'),

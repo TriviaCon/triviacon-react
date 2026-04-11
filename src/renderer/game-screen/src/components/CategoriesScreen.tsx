@@ -1,31 +1,31 @@
-import { Card, Col, Container, Row } from 'react-bootstrap'
 import type { Category } from '@shared/types/quiz'
 
 const CategoriesScreen = ({ categories }: { categories: Category[] }) => {
   return (
-    <Container fluid className="py-4">
-      <div style={{ textAlign: 'center' }}>
-        <h1 className="display-3">CATEGORIES</h1>
-        <hr />
+    <div className="w-full py-8 px-6">
+      <div className="text-center mb-6">
+        <h1 className="text-6xl font-bold">CATEGORIES</h1>
+        <hr className="border-border mt-4" />
       </div>
-      <Row xs={1} sm={2} md={3} lg={6} className="g-2 justify-content-center align-items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 justify-items-center">
         {categories.length === 0 ? (
-          <div className="text-center">No categories available.</div>
+          <div className="text-center col-span-full text-muted-foreground">
+            No categories available.
+          </div>
         ) : (
           categories.map((category) => (
-            <Col key={category.id} className="d-flex">
-              <Card className="w-100">
-                <Card.Body className="d-flex flex-column">
-                  <Card.Title className="h4 mb-1 text-center">
-                    <strong>{category.name}</strong>
-                  </Card.Title>
-                </Card.Body>
-              </Card>
-            </Col>
+            <div
+              key={category.id}
+              className="w-full rounded-lg border border-border bg-card p-4 flex flex-col"
+            >
+              <h4 className="text-lg font-bold text-center text-card-foreground">
+                {category.name}
+              </h4>
+            </div>
           ))
         )}
-      </Row>
-    </Container>
+      </div>
+    </div>
   )
 }
 
