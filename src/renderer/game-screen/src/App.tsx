@@ -7,7 +7,7 @@ import QuestionsScreen from './components/QuestionsScreen'
 import QuestionScreen from './components/QuestionScreen'
 import RankingScreen from './components/RankingScreen'
 
-function App(): JSX.Element {
+function App() {
   const gameState = useGameState()
 
   switch (gameState.phase) {

@@ -22,7 +22,7 @@ const queryClient = new QueryClient({
   })
 })
 
-function App(): JSX.Element {
+function App() {
   return (
     <div className="px-1 py-1 flex flex-col h-full">
       <QueryClientProvider client={queryClient}>
