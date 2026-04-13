@@ -64,7 +64,12 @@ export function registerIpcHandlers(): void {
       filters: [QUIZ_FILE_FILTER]
     })
     if (result.canceled || !result.filePath) return null
-    // TODO: copy current DB to new path
+    await db.copyTo(result.filePath)
+    await db.open(result.filePath)
+    const quizMeta = await meta.get()
+    const cats = await categories.all()
+    engine.loadQuiz(result.filePath, quizMeta, cats)
+    broadcastState()
     return result.filePath
   })
 
@@ -209,8 +214,9 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
-  ipcMain.handle(IPC.GAME_SHOW_QUESTIONS, (_, categoryId: number) => {
-    engine.showQuestions(categoryId)
+  ipcMain.handle(IPC.GAME_SHOW_QUESTIONS, async (_, categoryId: number) => {
+    const categoryQuestions = await questions.allByCategoryId(categoryId)
+    engine.showQuestions(categoryId, categoryQuestions)
     broadcastState()
   })
 

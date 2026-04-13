@@ -7,6 +7,7 @@ const initialState: GameState = {
   teams: [],
   currentTeamId: null,
   currentCategoryId: null,
+  categoryQuestions: [],
   activeQuestion: null,
   revealedAnswers: [],
   usedQuestions: [],

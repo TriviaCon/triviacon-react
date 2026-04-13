@@ -113,6 +113,17 @@ const convertJson = async () => {
   }
 }
 
+const getFilePath = (): string | null => {
+  return db?.config?.filename ?? null
+}
+
+const copyTo = async (destPath: string): Promise<void> => {
+  const srcPath = getFilePath()
+  if (!srcPath) throw new Error('No database open')
+  const fs = await import('fs')
+  await fs.promises.copyFile(srcPath, destPath)
+}
+
 const getStats = async (): Promise<Stats> => {
   if (!db) return { totalQuestions: 0, questionsWithMedia: 0 }
 
@@ -130,6 +141,8 @@ const getStats = async (): Promise<Stats> => {
 export default {
   new: _new,
   open: _open,
+  copyTo,
+  getFilePath,
   convertJson,
   getStats,
   questions,

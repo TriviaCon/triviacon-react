@@ -1,4 +1,4 @@
-import { useCategories } from '@renderer/hooks/useCategories'
+import { useGameState } from '@renderer/hooks/useGameState'
 import { useStats } from '@renderer/hooks/useStats'
 import {
   Dialog,
@@ -14,7 +14,7 @@ import {
 } from '@renderer/components/ui/table'
 
 export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: VoidFunction }) => {
-  const categories = useCategories()
+  const { categories } = useGameState()
   const stats = useStats()
 
   return (
@@ -27,7 +27,7 @@ export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: VoidFu
           <TableBody>
             <TableRow>
               <TableCell className="text-right font-semibold whitespace-nowrap">Total Categories</TableCell>
-              <TableCell>{categories.data?.length}</TableCell>
+              <TableCell>{categories.length}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="text-right font-semibold whitespace-nowrap">Total Questions</TableCell>

@@ -1,5 +1,6 @@
-import { FilePlus, Upload, Save, Play } from 'lucide-react'
+import { FilePlus, Upload, Save, Play, LayoutGrid, Trophy, Maximize } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
+import { Separator } from '@renderer/components/ui/separator'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,13 +53,26 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           </DropdownMenu>
         </>
       ) : (
-        <Button
-          variant="destructive"
-          onClick={() => window.api.openGameScreen()}
-        >
-          <Play className="mr-1 h-4 w-4" />
-          <strong>RUN QUIZ</strong>
-        </Button>
+        <>
+          <Button
+            variant="destructive"
+            onClick={() => window.api.openGameScreen()}
+          >
+            <Play className="mr-1 h-4 w-4" />
+            <strong>RUN QUIZ</strong>
+          </Button>
+          <Separator orientation="vertical" className="mx-1 h-8" />
+          <Button variant="outline" onClick={() => window.api.showCategories()}>
+            <LayoutGrid className="mr-1 h-4 w-4" /> Categories
+          </Button>
+          <Button variant="outline" onClick={() => window.api.showRanking()}>
+            <Trophy className="mr-1 h-4 w-4" /> Ranking
+          </Button>
+          <Separator orientation="vertical" className="mx-1 h-8" />
+          <Button variant="outline" onClick={() => window.api.toggleGameFullscreen()}>
+            <Maximize className="mr-1 h-4 w-4" /> Fullscreen
+          </Button>
+        </>
       )}
     </div>
   )

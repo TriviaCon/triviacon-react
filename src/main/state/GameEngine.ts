@@ -10,6 +10,7 @@ function createInitialState(): GameState {
     teams: [],
     currentTeamId: null,
     currentCategoryId: null,
+    categoryQuestions: [],
     activeQuestion: null,
     revealedAnswers: [],
     usedQuestions: [],
@@ -107,12 +108,14 @@ export class GameEngine {
   showCategories(): void {
     this.state.phase = GamePhase.Categories
     this.state.currentCategoryId = null
+    this.state.categoryQuestions = []
     this.state.activeQuestion = null
   }
 
-  showQuestions(categoryId: number): void {
+  showQuestions(categoryId: number, questions: Question[]): void {
     this.state.phase = GamePhase.Questions
     this.state.currentCategoryId = categoryId
+    this.state.categoryQuestions = questions
     this.state.activeQuestion = null
   }
 

@@ -1,7 +1,6 @@
 import Header from './components/layout/Header'
 import ControlView from './components/layout/ControlView'
 import { MutationCache, QueryClient, QueryClientProvider, QueryKey } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 declare module '@tanstack/react-query' {
   interface Register {
@@ -31,7 +30,6 @@ function App(): JSX.Element {
         <div className="flex-grow flex flex-col">
           <ControlView />
         </div>
-        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </div>
   )

@@ -18,6 +18,8 @@ function App(): JSX.Element {
         <QuestionsScreen
           categories={gameState.categories}
           currentCategoryId={gameState.currentCategoryId}
+          questions={gameState.categoryQuestions}
+          usedQuestions={gameState.usedQuestions}
         />
       )
     case GamePhase.Question:

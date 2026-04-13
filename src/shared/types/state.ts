@@ -20,6 +20,7 @@ export interface GameState {
   teams: Team[]
   currentTeamId: string | null
   currentCategoryId: number | null
+  categoryQuestions: Question[]
   activeQuestion: ActiveQuestionState | null
   revealedAnswers: number[]
   usedQuestions: number[]
