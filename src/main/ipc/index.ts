@@ -6,6 +6,7 @@ import categories from '../../data/categories'
 import questions from '../../data/questions'
 import answerOptions from '../../data/answerOptions'
 import meta from '../../data/meta'
+import teams from '../../data/teams'
 import { GameEngine } from '../state/GameEngine'
 import { getControlPanelWindow, getGameScreenWindow } from '../windows'
 
@@ -25,6 +26,15 @@ function broadcastState(): void {
   const state = engine.getState()
   safeSend(getControlPanelWindow(), IPC.STATE_UPDATE, state)
   safeSend(getGameScreenWindow(), IPC.STATE_UPDATE, state)
+}
+
+/** Persist teams to SQLite after any team mutation. */
+async function persistTeams(): Promise<void> {
+  try {
+    await teams.saveAll(engine.getState().teams)
+  } catch (err) {
+    console.error('Failed to persist teams:', err)
+  }
 }
 
 export function registerIpcHandlers(): void {
@@ -59,7 +69,8 @@ export function registerIpcHandlers(): void {
       await db.open(filePath)
       const quizMeta = await meta.get()
       const cats = await categories.all()
-      engine.loadQuiz(filePath, quizMeta, cats)
+      const savedTeams = await teams.all()
+      engine.loadQuiz(filePath, quizMeta, cats, savedTeams)
       broadcastState()
       return filePath
     } catch (err) {
@@ -83,7 +94,8 @@ export function registerIpcHandlers(): void {
       await db.open(result.filePath)
       const quizMeta = await meta.get()
       const cats = await categories.all()
-      engine.loadQuiz(result.filePath, quizMeta, cats)
+      const savedTeams = await teams.all()
+      engine.loadQuiz(result.filePath, quizMeta, cats, savedTeams)
       broadcastState()
       return result.filePath
     } catch (err) {
@@ -191,24 +203,28 @@ export function registerIpcHandlers(): void {
 
   // ── Team management ──────────────────────────────────────────────
 
-  ipcMain.handle(IPC.GAME_ADD_TEAM, (_, name: string) => {
+  ipcMain.handle(IPC.GAME_ADD_TEAM, async (_, name: string) => {
     engine.addTeam(name)
     broadcastState()
+    await persistTeams()
   })
 
-  ipcMain.handle(IPC.GAME_REMOVE_TEAM, (_, teamId: string) => {
+  ipcMain.handle(IPC.GAME_REMOVE_TEAM, async (_, teamId: string) => {
     engine.removeTeam(teamId)
     broadcastState()
+    await persistTeams()
   })
 
-  ipcMain.handle(IPC.GAME_RENAME_TEAM, (_, teamId: string, name: string) => {
+  ipcMain.handle(IPC.GAME_RENAME_TEAM, async (_, teamId: string, name: string) => {
     engine.renameTeam(teamId, name)
     broadcastState()
+    await persistTeams()
   })
 
-  ipcMain.handle(IPC.GAME_UPDATE_SCORE, (_, teamId: string, delta: number) => {
+  ipcMain.handle(IPC.GAME_UPDATE_SCORE, async (_, teamId: string, delta: number) => {
     engine.updateScore(teamId, delta)
     broadcastState()
+    await persistTeams()
   })
 
   ipcMain.handle(IPC.GAME_SET_CURRENT_TEAM, (_, teamId: string) => {

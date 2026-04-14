@@ -11,6 +11,7 @@ import { useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
 import { useUpdateAnswerOptionMutation } from '@renderer/hooks/useUpdateAnswerOptionMutation'
 import { useDeleteAnswerOptionMutation } from '@renderer/hooks/useDeleteAnswerOptionMutation'
 import { useAddAnswerOptionMutation } from '@renderer/hooks/useAddAnswerOptionMutation'
+import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 
 const QuestionView = ({ id }: { id: number }) => {
   const question = useQuestion(id)
@@ -22,9 +23,13 @@ const QuestionView = ({ id }: { id: number }) => {
 
   const update = (q: Partial<Question>) => updateQuestionMutation.mutate(q)
 
-  if (!question.data || !answerOptions.data) {
-    return <span className="text-muted-foreground">loading...</span>
+  if (question.isLoading || answerOptions.isLoading) {
+    return <QueryLoading label="Loading question..." />
   }
+  if (question.error || answerOptions.error) {
+    return <QueryError message={question.error?.message ?? answerOptions.error?.message} />
+  }
+  if (!question.data || !answerOptions.data) return null
 
   return (
     <div className="h-full flex flex-col space-y-3">

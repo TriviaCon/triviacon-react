@@ -46,12 +46,32 @@ const _new = async (path: string) => {
     FOREIGN KEY(questionId) REFERENCES Questions(id)
   )
 `)
+
+  // Create Teams table (persisted for crash recovery)
+  db.exec(`
+  CREATE TABLE IF NOT EXISTS Teams (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    score INTEGER NOT NULL DEFAULT 0,
+    sortOrder INTEGER NOT NULL DEFAULT 0
+  )
+`)
 }
 
 const _open = async (path: string) => {
   dbg('Opening new database', path)
   db = await open({ filename: path, driver: sqlite3.Database })
   db.on('trace', dbg)
+
+  // Migrate: ensure Teams table exists for older quiz files
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS Teams (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      score INTEGER NOT NULL DEFAULT 0,
+      sortOrder INTEGER NOT NULL DEFAULT 0
+    )
+  `)
 }
 
 const getFilePath = (): string | null => {

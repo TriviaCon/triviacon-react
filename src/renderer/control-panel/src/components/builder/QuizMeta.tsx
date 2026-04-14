@@ -12,6 +12,7 @@ import {
   useUpdateDate,
   useUpdateLocation
 } from '@renderer/hooks/useQuizMeta'
+import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 
 export const QuizMeta = () => {
   const meta = useQuizMeta()
@@ -21,9 +22,9 @@ export const QuizMeta = () => {
   const updateLocation = useUpdateLocation()
   const [showStatsModal, setShowStatsModal] = useState(false)
 
-  if (!meta.data) {
-    return <span className="text-muted-foreground">loading...</span>
-  }
+  if (meta.isLoading) return <QueryLoading label="Loading quiz metadata..." />
+  if (meta.error) return <QueryError message={meta.error.message} />
+  if (!meta.data) return null
 
   return (
     <>

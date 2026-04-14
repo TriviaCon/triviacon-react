@@ -5,12 +5,19 @@ import { useGameState } from '@renderer/hooks/useGameState'
 import { useQuestion } from '@renderer/hooks/useQuestion'
 import { useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
 import BasicQuestionViewer from './BasicQuestionViewer'
+import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 
 const QuestionColumn = ({ id }: { id: number }) => {
   const { revealedAnswers, usedQuestions } = useGameState()
   const question = useQuestion(id)
   const answerOptions = useAnswerOptions(id)
 
+  if (question.isLoading || answerOptions.isLoading) {
+    return <QueryLoading label="Loading question..." />
+  }
+  if (question.error || answerOptions.error) {
+    return <QueryError message={question.error?.message ?? answerOptions.error?.message} />
+  }
   if (!question.data || !answerOptions.data) return null
 
   return (

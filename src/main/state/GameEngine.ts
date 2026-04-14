@@ -1,5 +1,5 @@
 import { GamePhase, INITIAL_GAME_STATE, type GameState } from '@shared/types/state'
-import type { AnswerOption, Category, Question, QuizMeta } from '@shared/types/quiz'
+import type { AnswerOption, Category, Question, QuizMeta, Team } from '@shared/types/quiz'
 
 function createInitialState(): GameState {
   return { ...INITIAL_GAME_STATE }
@@ -20,13 +20,24 @@ export class GameEngine {
 
   // ── Quiz lifecycle ───────────────────────────────────────────
 
-  loadQuiz(filePath: string, meta: QuizMeta, categories: Category[]): void {
+  loadQuiz(filePath: string, meta: QuizMeta, categories: Category[], savedTeams?: Team[]): void {
     this.state = {
       ...createInitialState(),
       phase: GamePhase.Builder,
       quizFilePath: filePath,
       quizMeta: meta,
-      categories
+      categories,
+      teams: savedTeams ?? []
+    }
+    if (savedTeams && savedTeams.length > 0) {
+      this.state.currentTeamId = savedTeams[0].id
+      // Restore nextTeamId counter past existing team IDs
+      for (const t of savedTeams) {
+        const num = parseInt(t.id.replace(/\D/g, ''), 10)
+        if (!isNaN(num) && num >= nextTeamId) {
+          nextTeamId = num + 1
+        }
+      }
     }
   }
 
