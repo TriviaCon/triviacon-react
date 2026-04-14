@@ -8,7 +8,7 @@ import BasicQuestionViewer from './BasicQuestionViewer'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 
 const QuestionColumn = ({ id }: { id: number }) => {
-  const { revealedAnswers, usedQuestions } = useGameState()
+  const { revealedAnswers, usedQuestions, activeQuestion } = useGameState()
   const question = useQuestion(id)
   const answerOptions = useAnswerOptions(id)
 
@@ -20,12 +20,17 @@ const QuestionColumn = ({ id }: { id: number }) => {
   }
   if (!question.data || !answerOptions.data) return null
 
+  const markedAnswerId =
+    activeQuestion?.question.id === id ? (activeQuestion.markedAnswerId ?? null) : null
+
   return (
     <BasicQuestionViewer
       question={question.data}
       answerOptions={answerOptions.data}
       answerRevealed={revealedAnswers.includes(id)}
       onRevealAnswer={() => window.api.toggleAnswer(id)}
+      markedAnswerId={markedAnswerId}
+      onMarkAnswer={(answerId) => window.api.markAnswer(answerId)}
       used={usedQuestions.includes(id)}
       onUse={() => window.api.markUsed(id)}
     />

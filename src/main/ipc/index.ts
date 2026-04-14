@@ -283,4 +283,16 @@ export function registerIpcHandlers(): void {
     engine.markUsed(questionId)
     broadcastState()
   })
+
+  ipcMain.handle(IPC.GAME_MARK_ANSWER, (_, answerOptionId: number | null) => {
+    engine.markAnswer(answerOptionId)
+    broadcastState()
+  })
+
+  // ── Game screen appearance ──────────────────────────────────────
+
+  ipcMain.handle(IPC.GAME_TOGGLE_DARK_MODE, () => {
+    engine.toggleDarkMode()
+    broadcastState()
+  })
 }

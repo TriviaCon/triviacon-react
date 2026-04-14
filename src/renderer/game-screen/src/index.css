@@ -3,7 +3,27 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Light theme (default) */
 @theme inline {
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(240 10% 3.9%);
+  --color-primary: hsl(240 5.9% 10%);
+  --color-primary-foreground: hsl(0 0% 98%);
+  --color-muted: hsl(240 4.8% 95.9%);
+  --color-muted-foreground: hsl(240 3.8% 46.1%);
+  --color-card: hsl(240 4.8% 95.9%);
+  --color-card-foreground: hsl(240 10% 3.9%);
+  --color-border: hsl(240 5.9% 90%);
+  --color-success: hsl(142 76% 36%);
+  --color-success-foreground: hsl(0 0% 100%);
+  --color-marked: hsl(38 92% 50%);
+  --color-marked-foreground: hsl(0 0% 100%);
+  --color-wrong: hsl(0 84% 60%);
+  --color-wrong-foreground: hsl(0 0% 100%);
+}
+
+/* Dark theme (toggled via .dark class on root) */
+.dark {
   --color-background: hsl(240 10% 3.9%);
   --color-foreground: hsl(0 0% 98%);
   --color-primary: hsl(0 0% 98%);
@@ -13,8 +33,6 @@
   --color-card: hsl(240 10% 7%);
   --color-card-foreground: hsl(0 0% 98%);
   --color-border: hsl(240 3.7% 15.9%);
-  --color-success: hsl(142 76% 36%);
-  --color-success-foreground: hsl(0 0% 100%);
 }
 
 @layer base {

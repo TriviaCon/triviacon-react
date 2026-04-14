@@ -94,13 +94,13 @@ const api = {
     ipcRenderer.invoke(IPC.GAME_TOGGLE_ANSWER, questionId),
   markUsed: (questionId: number): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_MARK_USED, questionId),
+  markAnswer: (answerOptionId: number | null): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_MARK_ANSWER, answerOptionId),
 
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),
   toggleGameFullscreen: (): Promise<boolean> => ipcRenderer.invoke(IPC.DISPLAY_TOGGLE_FULLSCREEN),
-
-  // ── Window management ──────────────────────────────────────────
-  closeWindow: (): Promise<void> => ipcRenderer.invoke(IPC.WINDOW_CLOSE)
+  toggleGameDarkMode: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_TOGGLE_DARK_MODE)
 }
 
 export type ControlPanelApi = typeof api

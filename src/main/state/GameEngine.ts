@@ -120,7 +120,8 @@ export class GameEngine {
     this.state.activeQuestion = {
       question,
       answerOptions,
-      answerRevealed: this.state.revealedAnswers.includes(question.id)
+      answerRevealed: this.state.revealedAnswers.includes(question.id),
+      markedAnswerId: null
     }
   }
 
@@ -150,5 +151,17 @@ export class GameEngine {
     } else {
       this.state.usedQuestions = this.state.usedQuestions.filter((id) => id !== questionId)
     }
+  }
+
+  markAnswer(answerOptionId: number | null): void {
+    if (this.state.activeQuestion) {
+      this.state.activeQuestion.markedAnswerId = answerOptionId
+    }
+  }
+
+  // ── Game screen appearance ──────────────────────────────────
+
+  toggleDarkMode(): void {
+    this.state.gameScreenDarkMode = !this.state.gameScreenDarkMode
   }
 }

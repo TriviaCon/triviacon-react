@@ -13,6 +13,7 @@ export interface ActiveQuestionState {
   question: Question
   answerOptions: AnswerOption[]
   answerRevealed: boolean
+  markedAnswerId: number | null
 }
 
 export interface GameState {
@@ -27,6 +28,7 @@ export interface GameState {
   quizMeta: QuizMeta | null
   quizFilePath: string | null
   categories: Category[]
+  gameScreenDarkMode: boolean
 }
 
 export const INITIAL_GAME_STATE: GameState = {
@@ -40,5 +42,6 @@ export const INITIAL_GAME_STATE: GameState = {
   usedQuestions: [],
   quizMeta: null,
   quizFilePath: null,
-  categories: []
+  categories: [],
+  gameScreenDarkMode: false
 }

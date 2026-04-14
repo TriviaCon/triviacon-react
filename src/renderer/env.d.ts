@@ -79,13 +79,12 @@ declare global {
       // --- Question state ---
       toggleAnswer: (questionId: number) => Promise<void>
       markUsed: (questionId: number) => Promise<void>
+      markAnswer: (answerOptionId: number | null) => Promise<void>
 
       // --- Display management (control panel only) ---
       openGameScreen: () => Promise<void>
       toggleGameFullscreen: () => Promise<boolean>
-
-      // --- Window management ---
-      closeWindow: () => Promise<void>
+      toggleGameDarkMode: () => Promise<void>
     }
   }
 }

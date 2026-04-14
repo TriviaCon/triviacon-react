@@ -1,5 +1,16 @@
 import type { ActiveQuestionState } from '@shared/types/state'
 
+function optionClass(
+  correct: boolean,
+  marked: boolean,
+  answerRevealed: boolean
+): string {
+  if (answerRevealed && correct) return 'bg-success text-success-foreground'
+  if (answerRevealed && marked && !correct) return 'bg-wrong text-wrong-foreground'
+  if (marked) return 'bg-marked text-marked-foreground'
+  return 'bg-card text-card-foreground border border-border'
+}
+
 const QuestionScreen = ({ activeQuestion }: { activeQuestion: ActiveQuestionState | null }) => {
   if (!activeQuestion) {
     return (
@@ -9,7 +20,7 @@ const QuestionScreen = ({ activeQuestion }: { activeQuestion: ActiveQuestionStat
     )
   }
 
-  const { question, answerOptions, answerRevealed } = activeQuestion
+  const { question, answerOptions, answerRevealed, markedAnswerId } = activeQuestion
   const correctOptions = answerOptions.filter((opt) => opt.correct)
 
   return (
@@ -32,11 +43,7 @@ const QuestionScreen = ({ activeQuestion }: { activeQuestion: ActiveQuestionStat
             {answerOptions.map((opt, index) => (
               <div
                 key={opt.id}
-                className={`rounded-lg p-4 ${
-                  answerRevealed && opt.correct
-                    ? 'bg-success text-success-foreground'
-                    : 'bg-card text-card-foreground border border-border'
-                }`}
+                className={`rounded-lg p-4 transition-colors ${optionClass(opt.correct, opt.id === markedAnswerId, answerRevealed)}`}
               >
                 <p className="text-4xl">
                   {String.fromCharCode(65 + index)}. {opt.text}

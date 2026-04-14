@@ -1,4 +1,5 @@
 import './index.css'
+import { useEffect } from 'react'
 import { useGameState } from './hooks/useGameState'
 import { GamePhase } from '@shared/types/state'
 import IdleScreen from './components/IdleScreen'
@@ -9,6 +10,10 @@ import RankingScreen from './components/RankingScreen'
 
 function App() {
   const gameState = useGameState()
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', gameState.gameScreenDarkMode)
+  }, [gameState.gameScreenDarkMode])
 
   switch (gameState.phase) {
     case GamePhase.Categories:

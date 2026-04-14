@@ -88,13 +88,3 @@
   user-select: none;
   overflow-x: hidden;
 }
-
-.draggable {
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-app-region: drag;
-}
-
-.nodrag {
-  -webkit-app-region: no-drag;
-}

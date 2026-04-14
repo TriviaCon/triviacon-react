@@ -52,16 +52,17 @@ export const IPC = {
   // Question state
   GAME_TOGGLE_ANSWER: 'game:toggleAnswer',
   GAME_MARK_USED: 'game:markUsed',
+  GAME_MARK_ANSWER: 'game:markAnswer',
+
+  // Game screen appearance
+  GAME_TOGGLE_DARK_MODE: 'game:toggleDarkMode',
 
   // State push (main -> both renderers)
   STATE_UPDATE: 'state:update',
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',
-  DISPLAY_TOGGLE_FULLSCREEN: 'display:toggleFullscreen',
-
-  // Window management
-  WINDOW_CLOSE: 'window:close'
+  DISPLAY_TOGGLE_FULLSCREEN: 'display:toggleFullscreen'
 } as const
 
 // Payload types

@@ -8,6 +8,8 @@ const BasicQuestionViewer = ({
   answerOptions,
   answerRevealed,
   onRevealAnswer,
+  markedAnswerId,
+  onMarkAnswer,
   used,
   onUse
 }: {
@@ -15,6 +17,8 @@ const BasicQuestionViewer = ({
   answerOptions: AnswerOption[]
   answerRevealed: boolean
   onRevealAnswer: () => void
+  markedAnswerId: number | null
+  onMarkAnswer: (id: number | null) => void
   used: boolean
   onUse: () => void
 }) => {
@@ -39,20 +43,30 @@ const BasicQuestionViewer = ({
         <span className="font-semibold text-sm text-right pt-1">Answers</span>
         <div className="space-y-1.5">
           {answerOptions.length > 0 ? (
-            answerOptions.map((opt, index) => (
-              <div
-                key={opt.id}
-                className={cn(
-                  'rounded-md px-3 py-2 text-sm border',
-                  answerRevealed && opt.correct
-                    ? 'bg-green-100 border-green-300 text-green-900'
-                    : 'bg-muted/50 border-border'
-                )}
-              >
-                <strong>{String.fromCharCode(65 + index)}.</strong> {opt.text}
-                {answerRevealed && opt.correct && ' \u2714'}
-              </div>
-            ))
+            answerOptions.map((opt, index) => {
+              const isMarked = opt.id === markedAnswerId
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => onMarkAnswer(isMarked ? null : opt.id)}
+                  className={cn(
+                    'w-full text-left rounded-md px-3 py-2 text-sm border cursor-pointer transition-colors',
+                    answerRevealed && opt.correct
+                      ? 'bg-green-100 border-green-300 text-green-900'
+                      : answerRevealed && isMarked && !opt.correct
+                        ? 'bg-red-100 border-red-300 text-red-900'
+                        : isMarked
+                          ? 'bg-amber-100 border-amber-300 text-amber-900'
+                          : 'bg-muted/50 border-border hover:bg-muted'
+                  )}
+                >
+                  <strong>{String.fromCharCode(65 + index)}.</strong> {opt.text}
+                  {answerRevealed && opt.correct && ' \u2714'}
+                  {isMarked && !answerRevealed && ' \u25C0'}
+                </button>
+              )
+            })
           ) : (
             <span className="text-sm text-muted-foreground">No answer options</span>
           )}

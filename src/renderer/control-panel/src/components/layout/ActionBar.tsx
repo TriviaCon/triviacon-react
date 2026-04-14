@@ -1,4 +1,15 @@
-import { FilePlus, Upload, Save, Play, LayoutGrid, Trophy, Maximize, ChevronLeft } from 'lucide-react'
+import {
+  FilePlus,
+  Upload,
+  Save,
+  Play,
+  LayoutGrid,
+  Trophy,
+  Maximize,
+  ChevronLeft,
+  Sun,
+  Moon
+} from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Separator } from '@renderer/components/ui/separator'
 import {
@@ -15,7 +26,7 @@ interface ActionBarProps {
 }
 
 const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
-  const { phase, currentCategoryId } = useGameState()
+  const { phase, currentCategoryId, gameScreenDarkMode } = useGameState()
 
   const handleBack = () => {
     if (phase === GamePhase.Question && currentCategoryId !== null) {
@@ -98,6 +109,14 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           <Separator orientation="vertical" className="mx-1 h-8" />
           <Button variant="outline" onClick={() => window.api.toggleGameFullscreen()}>
             <Maximize className="mr-1 h-4 w-4" /> Fullscreen
+          </Button>
+          <Button variant="outline" onClick={() => window.api.toggleGameDarkMode()}>
+            {gameScreenDarkMode ? (
+              <Sun className="mr-1 h-4 w-4" />
+            ) : (
+              <Moon className="mr-1 h-4 w-4" />
+            )}
+            {gameScreenDarkMode ? 'Light' : 'Dark'}
           </Button>
         </>
       )}

@@ -1,22 +1,20 @@
-const Logo: React.FC<{ bg?: string }> = ({ bg = 'black' }) => {
+const Logo: React.FC = () => {
   return (
-    <div style={{ backgroundColor: bg }} className="rounded px-1">
-      <h4 className="text-center mb-0">
-        <span className="text-white">Trivia</span>
-        <span
-          className="font-bold"
-          style={{
-            background:
-              'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)',
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}
-        >
-          CON
-        </span>
-      </h4>
-    </div>
+    <h4 className="text-center mb-0 select-none">
+      <span className="text-foreground">Trivia</span>
+      <span
+        className="font-bold"
+        style={{
+          background:
+            'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}
+      >
+        CON
+      </span>
+    </h4>
   )
 }
 
