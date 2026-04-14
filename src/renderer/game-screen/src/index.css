@@ -3,8 +3,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Light theme (default) */
-@theme inline {
+/* Light theme (default) — NOT inline so .dark can override the custom properties */
+@theme {
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(240 10% 3.9%);
   --color-primary: hsl(240 5.9% 10%);
