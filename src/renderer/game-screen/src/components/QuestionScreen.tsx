@@ -1,10 +1,6 @@
 import type { ActiveQuestionState } from '@shared/types/state'
 
-const QuestionScreen = ({
-  activeQuestion
-}: {
-  activeQuestion: ActiveQuestionState | null
-}) => {
+const QuestionScreen = ({ activeQuestion }: { activeQuestion: ActiveQuestionState | null }) => {
   if (!activeQuestion) {
     return (
       <div className="flex items-center justify-center h-screen">

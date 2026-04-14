@@ -55,9 +55,7 @@ const QuestionView = ({ id }: { id: number }) => {
         <CardContent className="py-2 px-3 space-y-2">
           <h6 className="text-sm font-semibold">Media:</h6>
           <div className="flex items-center justify-center border border-border rounded">
-            {question.data.media && (
-              <img src={question.data.media} className="w-1/2 rounded" />
-            )}
+            {question.data.media && <img src={question.data.media} className="w-1/2 rounded" />}
             <div
               className="flex-1 p-4 text-center cursor-pointer border-2 border-dashed border-primary/40 rounded m-2"
               onDragOver={(e) => e.preventDefault()}
@@ -92,7 +90,9 @@ const QuestionView = ({ id }: { id: number }) => {
         <CardContent className="py-2 px-3">
           <div className="flex items-center justify-between mb-2">
             <h6 className="text-sm font-semibold">Answer Options</h6>
-            <Button size="sm" onClick={() => addOption.mutate()}>Add</Button>
+            <Button size="sm" onClick={() => addOption.mutate()}>
+              Add
+            </Button>
           </div>
           <div className="space-y-2">
             {answerOptions.data.map((opt, index) => (
@@ -104,9 +104,7 @@ const QuestionView = ({ id }: { id: number }) => {
                   className="h-4 w-4 rounded border-input"
                   title="Correct answer"
                 />
-                <Label className="font-semibold shrink-0">
-                  {String.fromCharCode(65 + index)}.
-                </Label>
+                <Label className="font-semibold shrink-0">{String.fromCharCode(65 + index)}.</Label>
                 <Input
                   value={opt.text}
                   onChange={(e) => updateOption.mutate({ id: opt.id, text: e.target.value })}

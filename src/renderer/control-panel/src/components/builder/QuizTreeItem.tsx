@@ -21,7 +21,9 @@ const DeleteCategoryButton = ({
 }) => {
   const [pending, setPending] = useState(false)
   const handleClick = async () => {
-    if (!window.confirm(`Are you sure you want to delete category "${name}" and all its questions?`)) {
+    if (
+      !window.confirm(`Are you sure you want to delete category "${name}" and all its questions?`)
+    ) {
       return
     }
     setPending(true)
@@ -29,7 +31,13 @@ const DeleteCategoryButton = ({
     setPending(false)
   }
   return (
-    <Button variant="outline" size="icon" className="h-8 w-8 text-destructive border-destructive/50 hover:bg-destructive/10" onClick={handleClick} disabled={pending}>
+    <Button
+      variant="outline"
+      size="icon"
+      className="h-8 w-8 text-destructive border-destructive/50 hover:bg-destructive/10"
+      onClick={handleClick}
+      disabled={pending}
+    >
       <Trash2 className="h-4 w-4" />
     </Button>
   )
@@ -69,9 +77,11 @@ const QuizTreeItem = ({
       <AccordionTrigger onClick={onOpen} className="text-sm font-semibold">
         {category.name} ({questions.length})
       </AccordionTrigger>
-      <AccordionContent onAnimationEnd={(e) => {
-        if ((e.target as HTMLElement).dataset.state === 'closed') onClose()
-      }}>
+      <AccordionContent
+        onAnimationEnd={(e) => {
+          if ((e.target as HTMLElement).dataset.state === 'closed') onClose()
+        }}
+      >
         <div className="flex gap-2 mb-2">
           <Input
             readOnly={!editable}
@@ -100,10 +110,7 @@ const QuizTreeItem = ({
             </Button>
           ))}
           {editable && (
-            <Button
-              size="sm"
-              onClick={() => addQuestionMutation.mutate()}
-            >
+            <Button size="sm" onClick={() => addQuestionMutation.mutate()}>
               <Plus className="h-4 w-4" />
             </Button>
           )}

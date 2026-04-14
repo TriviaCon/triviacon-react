@@ -22,12 +22,7 @@ const AddCategoryForm = () => {
   }
   return (
     <form className="flex gap-2 mb-2" onSubmit={handleSubmit}>
-      <Input
-        type="text"
-        name="name"
-        placeholder="Add new category"
-        readOnly={mutation.isPending}
-      />
+      <Input type="text" name="name" placeholder="Add new category" readOnly={mutation.isPending} />
       <Button type="submit" disabled={mutation.isPending}>
         Add
       </Button>

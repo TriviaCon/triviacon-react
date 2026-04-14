@@ -25,8 +25,7 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_CATEGORY_CREATE, name),
   categoryUpdate: (id: number, name: string): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_CATEGORY_UPDATE, id, name),
-  categoryRemove: (id: number): Promise<void> =>
-    ipcRenderer.invoke(IPC.QUIZ_CATEGORY_REMOVE, id),
+  categoryRemove: (id: number): Promise<void> => ipcRenderer.invoke(IPC.QUIZ_CATEGORY_REMOVE, id),
 
   // ── Questions ──────────────────────────────────────────────────
   questionsByCategory: (categoryId: number): Promise<Question[]> =>
@@ -37,8 +36,7 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_QUESTION_CREATE, question),
   questionUpdate: (id: number, updates: Partial<Omit<Question, 'id'>>): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_QUESTION_UPDATE, id, updates),
-  questionDelete: (id: number): Promise<void> =>
-    ipcRenderer.invoke(IPC.QUIZ_QUESTION_DELETE, id),
+  questionDelete: (id: number): Promise<void> => ipcRenderer.invoke(IPC.QUIZ_QUESTION_DELETE, id),
 
   // ── Answer Options ─────────────────────────────────────────────
   answerOptionsByQuestion: (questionId: number): Promise<AnswerOption[]> =>
@@ -99,8 +97,7 @@ const api = {
 
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),
-  toggleGameFullscreen: (): Promise<boolean> =>
-    ipcRenderer.invoke(IPC.DISPLAY_TOGGLE_FULLSCREEN),
+  toggleGameFullscreen: (): Promise<boolean> => ipcRenderer.invoke(IPC.DISPLAY_TOGGLE_FULLSCREEN),
 
   // ── Window management ──────────────────────────────────────────
   closeWindow: (): Promise<void> => ipcRenderer.invoke(IPC.WINDOW_CLOSE)

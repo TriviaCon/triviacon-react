@@ -43,7 +43,9 @@ export const QuizMeta = () => {
           <div className="flex gap-4">
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">
-                <Label htmlFor="quiz-name" className="w-16 text-right text-sm shrink-0">Name</Label>
+                <Label htmlFor="quiz-name" className="w-16 text-right text-sm shrink-0">
+                  Name
+                </Label>
                 <Input
                   id="quiz-name"
                   placeholder="Quiz Name"
@@ -52,7 +54,9 @@ export const QuizMeta = () => {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Label htmlFor="quiz-author" className="w-16 text-right text-sm shrink-0">Author</Label>
+                <Label htmlFor="quiz-author" className="w-16 text-right text-sm shrink-0">
+                  Author
+                </Label>
                 <Input
                   id="quiz-author"
                   placeholder="Quiz Author"
@@ -61,7 +65,9 @@ export const QuizMeta = () => {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Label htmlFor="quiz-date" className="w-16 text-right text-sm shrink-0">Date</Label>
+                <Label htmlFor="quiz-date" className="w-16 text-right text-sm shrink-0">
+                  Date
+                </Label>
                 <Input
                   id="quiz-date"
                   type="date"
@@ -70,7 +76,9 @@ export const QuizMeta = () => {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Label htmlFor="quiz-location" className="w-16 text-right text-sm shrink-0">Location</Label>
+                <Label htmlFor="quiz-location" className="w-16 text-right text-sm shrink-0">
+                  Location
+                </Label>
                 <Input
                   id="quiz-location"
                   placeholder="Quiz Location"

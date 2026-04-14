@@ -38,7 +38,10 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="text-green-600 border-green-600/50 hover:bg-green-600/10">
+              <Button
+                variant="outline"
+                className="text-green-600 border-green-600/50 hover:bg-green-600/10"
+              >
                 <Save className="mr-1 h-4 w-4" /> Save Quiz
               </Button>
             </DropdownMenuTrigger>
@@ -54,10 +57,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
         </>
       ) : (
         <>
-          <Button
-            variant="destructive"
-            onClick={() => window.api.openGameScreen()}
-          >
+          <Button variant="destructive" onClick={() => window.api.openGameScreen()}>
             <Play className="mr-1 h-4 w-4" />
             <strong>RUN QUIZ</strong>
           </Button>

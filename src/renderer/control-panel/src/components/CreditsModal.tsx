@@ -1,11 +1,6 @@
 import { ExternalLink, Bug } from 'lucide-react'
 import Logo from './layout/Logo'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@renderer/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@renderer/components/ui/dialog'
 
 interface CreditsModalProps {
   show: boolean
@@ -34,17 +29,38 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
           <p>Built using:</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
-              <a href="#" className="text-primary underline" onClick={(e) => { e.preventDefault(); window.open('https://www.electronjs.org/', '_blank') }}>
+              <a
+                href="#"
+                className="text-primary underline"
+                onClick={(e) => {
+                  e.preventDefault()
+                  window.open('https://www.electronjs.org/', '_blank')
+                }}
+              >
                 ElectronJS
               </a>
             </li>
             <li>
-              <a href="#" className="text-primary underline" onClick={(e) => { e.preventDefault(); window.open('https://react.dev/', '_blank') }}>
+              <a
+                href="#"
+                className="text-primary underline"
+                onClick={(e) => {
+                  e.preventDefault()
+                  window.open('https://react.dev/', '_blank')
+                }}
+              >
                 ReactJS
               </a>
             </li>
             <li>
-              <a href="#" className="text-primary underline" onClick={(e) => { e.preventDefault(); window.open('https://tailwindcss.com/', '_blank') }}>
+              <a
+                href="#"
+                className="text-primary underline"
+                onClick={(e) => {
+                  e.preventDefault()
+                  window.open('https://tailwindcss.com/', '_blank')
+                }}
+              >
                 Tailwind CSS
               </a>
             </li>
@@ -52,13 +68,27 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
           <p>Licensed under the MIT License.</p>
           <p className="flex items-center gap-2">
             <ExternalLink className="h-4 w-4" />
-            <a href="#" className="text-primary underline" onClick={(e) => { e.preventDefault(); window.open('https://github.com/TriviaCon/triviacon-react', '_blank') }}>
+            <a
+              href="#"
+              className="text-primary underline"
+              onClick={(e) => {
+                e.preventDefault()
+                window.open('https://github.com/TriviaCon/triviacon-react', '_blank')
+              }}
+            >
               view the source on GitHub
             </a>
           </p>
           <p className="flex items-center gap-2">
             <Bug className="h-4 w-4" />
-            <a href="#" className="text-primary underline" onClick={(e) => { e.preventDefault(); window.open('https://github.com/TriviaCon/triviacon-react/issues', '_blank') }}>
+            <a
+              href="#"
+              className="text-primary underline"
+              onClick={(e) => {
+                e.preventDefault()
+                window.open('https://github.com/TriviaCon/triviacon-react/issues', '_blank')
+              }}
+            >
               report an issue
             </a>
           </p>

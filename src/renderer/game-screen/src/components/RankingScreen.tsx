@@ -5,7 +5,7 @@ const sizeClasses = [
   'text-[4.5rem]', // 1st
   'text-[3.5rem]', // 2nd
   'text-[2.9rem]', // 3rd
-  'text-[1.7rem]'  // 4th+
+  'text-[1.7rem]' // 4th+
 ]
 
 const RankingScreen = ({ teams }: { teams: Team[] }) => {

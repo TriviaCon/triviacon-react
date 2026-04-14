@@ -95,7 +95,10 @@ const TeamTable = () => {
                     onChange={(e) => setEditingTeamName(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleSaveTeamName()
-                      else if (e.key === 'Escape') { setEditingTeamId(null); setEditingTeamName('') }
+                      else if (e.key === 'Escape') {
+                        setEditingTeamId(null)
+                        setEditingTeamName('')
+                      }
                     }}
                     onBlur={handleSaveTeamName}
                     autoFocus
@@ -103,7 +106,10 @@ const TeamTable = () => {
                   />
                 ) : (
                   <span
-                    onClick={() => { setEditingTeamId(team.id); setEditingTeamName(team.name) }}
+                    onClick={() => {
+                      setEditingTeamId(team.id)
+                      setEditingTeamName(team.name)
+                    }}
                     className="cursor-pointer hover:underline"
                   >
                     {team.name}
@@ -112,11 +118,21 @@ const TeamTable = () => {
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-between gap-1">
-                  <Button variant="outline" size="sm" className="h-6 w-8 text-xs" onClick={() => window.api.updateScore(team.id, -1)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-6 w-8 text-xs"
+                    onClick={() => window.api.updateScore(team.id, -1)}
+                  >
                     -1
                   </Button>
                   <span className="font-medium">{team.score}</span>
-                  <Button variant="outline" size="sm" className="h-6 w-8 text-xs" onClick={() => window.api.updateScore(team.id, 1)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-6 w-8 text-xs"
+                    onClick={() => window.api.updateScore(team.id, 1)}
+                  >
                     +1
                   </Button>
                 </div>

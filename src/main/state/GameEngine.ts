@@ -1,8 +1,4 @@
-import {
-  GamePhase,
-  INITIAL_GAME_STATE,
-  type GameState
-} from '@shared/types/state'
+import { GamePhase, INITIAL_GAME_STATE, type GameState } from '@shared/types/state'
 import type { AnswerOption, Category, Question, QuizMeta } from '@shared/types/quiz'
 
 function createInitialState(): GameState {

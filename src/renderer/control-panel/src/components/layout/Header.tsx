@@ -14,7 +14,12 @@ const Header = () => {
         <Logo bg="transparent" />
         <div className="nodrag flex items-center gap-1">
           <DebugMenu />
-          <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => setShowCredits(true)}>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => setShowCredits(true)}
+          >
             <CircleHelp className="h-4 w-4" />
           </Button>
           <Button
