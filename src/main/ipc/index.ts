@@ -12,6 +12,10 @@ import { getControlPanelWindow, getGameScreenWindow } from '../windows'
 
 const engine = new GameEngine()
 
+export function getEngine(): GameEngine {
+  return engine
+}
+
 function safeSend(win: BrowserWindow | null, channel: string, ...args: unknown[]): void {
   try {
     if (win && !win.isDestroyed()) {

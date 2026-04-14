@@ -1,4 +1,4 @@
-import { FilePlus, Upload, Save, Play, LayoutGrid, Trophy, Maximize } from 'lucide-react'
+import { FilePlus, Upload, Save, Play, LayoutGrid, Trophy, Maximize, ChevronLeft } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Separator } from '@renderer/components/ui/separator'
 import {
@@ -7,12 +7,31 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
+import { useGameState } from '@renderer/hooks/useGameState'
+import { GamePhase } from '@shared/types/state'
 
 interface ActionBarProps {
   activeTab: string
 }
 
 const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
+  const { phase, currentCategoryId } = useGameState()
+
+  const handleBack = () => {
+    if (phase === GamePhase.Question && currentCategoryId !== null) {
+      window.api.showQuestions(currentCategoryId)
+    } else if (phase === GamePhase.Questions) {
+      window.api.showCategories()
+    }
+  }
+
+  const backLabel =
+    phase === GamePhase.Question
+      ? '← Questions'
+      : phase === GamePhase.Questions
+        ? '← Categories'
+        : null
+
   return (
     <div className="flex gap-1 mb-2 pb-2 border-b border-border">
       {activeTab === 'builder' ? (
@@ -62,6 +81,14 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
             <strong>RUN QUIZ</strong>
           </Button>
           <Separator orientation="vertical" className="mx-1 h-8" />
+          {backLabel && (
+            <>
+              <Button variant="outline" onClick={handleBack}>
+                <ChevronLeft className="mr-1 h-4 w-4" /> {backLabel}
+              </Button>
+              <Separator orientation="vertical" className="mx-1 h-8" />
+            </>
+          )}
           <Button variant="outline" onClick={() => window.api.showCategories()}>
             <LayoutGrid className="mr-1 h-4 w-4" /> Categories
           </Button>
