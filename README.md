@@ -1,34 +1,91 @@
-# triviacon-app
+# Triviacon
 
-An Electron application with React and TypeScript
+> Przenośna aplikacja do prowadzenia quizów na żywo — Portable live quiz host for events
 
-## Recommended IDE Setup
+Triviacon is a self-contained desktop application for running trivia quiz nights. The host manages the game from a control panel window while contestants follow along on a separate game screen — ideal for projectors, TVs, or second monitors.
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+---
 
-## Project Setup
+## Download
 
-### Install
+Head to the [Releases page](https://github.com/alucard87pl/triviacon/releases/latest) and grab the build for your platform:
+
+| Platform | File |
+|---|---|
+| Windows | `Triviacon-x.x.x-win.zip` — extract and run `triviacon.exe` |
+| Linux | `Triviacon-x.x.x.AppImage` — `chmod +x`, then run |
+| macOS | `Triviacon-x.x.x-mac.zip` — extract and run `Triviacon.app` |
+
+No installation required. The app is fully portable — put it on a USB drive, a shared folder, or anywhere you like.
+
+---
+
+## Running a quiz night
+
+1. **Launch Triviacon** — the control panel opens automatically
+2. **Open or create a quiz file** (`.tcq`) using the toolbar
+3. **Build your quiz** — add categories, questions, answer options, and optional media (images, audio, video) in the Builder tab
+4. **Set up teams** in the Runner tab before the game starts
+5. **Open the game screen** — click the monitor icon in the toolbar; point a projector or second display at this window
+6. **Run the game** — navigate questions from the control panel; reveal answers, mark scores, and track team standings in real time
+
+### Quiz files
+
+Quizzes are saved as `.tcq` files — a ZIP archive containing the quiz data and all attached media. They are fully self-contained and easy to share.
+
+---
+
+## Interface language
+
+The UI is available in **Polish** and **English**. Change the language in the Settings tab of the control panel.
+
+---
+
+## Reporting issues & suggestions
+
+Found a bug or have an idea? [Open an issue](https://github.com/alucard87pl/triviacon/issues) on GitHub. Please include:
+- What you were trying to do
+- What happened instead
+- Your operating system and Triviacon version
+
+---
+
+## For developers
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v22+
+- npm (comes with Node)
+
+### Setup
 
 ```bash
-$ pnpm install
+git clone https://github.com/alucard87pl/triviacon.git
+cd triviacon
+npm install
 ```
 
 ### Development
 
 ```bash
-$ pnpm dev
+npm run dev
 ```
+
+Starts the app in dev mode with hot reload on both the main process and both renderer windows.
 
 ### Build
 
 ```bash
-# For windows
-$ pnpm build:win
-
-# For macOS
-$ pnpm build:mac
-
-# For Linux
-$ pnpm build:linux
+npm run build:win    # Windows (zip)
+npm run build:mac    # macOS (zip, x64 + arm64)
+npm run build:linux  # Linux (AppImage)
 ```
+
+### Tech stack
+
+- [Electron](https://www.electronjs.org/) — desktop runtime
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS v4](https://tailwindcss.com/) + [Radix UI](https://www.radix-ui.com/)
+- [TanStack Query](https://tanstack.com/query) — data fetching and cache
+- [i18next](https://www.i18next.com/) — internationalisation
+- [adm-zip](https://github.com/cthackers/adm-zip) — quiz file packaging
