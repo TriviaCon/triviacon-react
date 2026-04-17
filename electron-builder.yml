@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: triviacon-app
+appId: io.github.alucard87pl.triviacon
+productName: Triviacon
 directories:
   buildResources: build
 files:
@@ -12,13 +12,16 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: triviacon-app
-nsis:
-  artifactName: ${name}-${version}-setup.${ext}
-  shortcutName: ${productName}
-  uninstallDisplayName: ${productName}
-  createDesktopShortcut: always
+  executableName: triviacon
+  target:
+    - target: zip
+      arch: x64
 mac:
+  target:
+    - target: zip
+      arch:
+        - x64
+        - arm64
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -26,20 +29,14 @@ mac:
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
-dmg:
-  artifactName: ${name}-${version}.${ext}
 linux:
   target:
-    - AppImage
-    - snap
-    - deb
-  maintainer: electronjs.org
+    - target: AppImage
+      arch: x64
+  maintainer: Marcin "Aluś" Jędrecki
   category: Utility
-appImage:
-  artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
-electronDownload:
-  mirror: https://npmmirror.com/mirrors/electron/
+  provider: github
+  owner: alucard87pl
+  repo: triviacon
