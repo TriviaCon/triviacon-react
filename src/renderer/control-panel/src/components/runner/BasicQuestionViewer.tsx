@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { Label } from '@renderer/components/ui/label'
-import { Toggle } from '@renderer/components/ui/toggle'
+import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { cn } from '@renderer/lib/utils'
+import { mediaUrl } from '@shared/mediaUrl'
 
 const BasicQuestionViewer = ({
   question,
@@ -22,25 +24,26 @@ const BasicQuestionViewer = ({
   used: boolean
   onUse: () => void
 }) => {
+  const { t } = useTranslation()
+  const mediaSrc = mediaUrl(question.media)
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">{question.text}</h2>
 
       <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 items-start">
-        <span className="font-semibold text-sm text-right">Media</span>
-        <div className="rounded-lg border border-border p-3 flex gap-4">
-          <div>
-            {question.media && <img src={question.media} className="max-w-[200px] rounded" />}
-          </div>
-          <div className="border-l border-border pl-3">
-            <span className="text-sm text-muted-foreground mb-1 block">Controls</span>
-            <Toggle variant="outline" size="sm">
-              Fullscreen
-            </Toggle>
-          </div>
+        <span className="font-semibold text-sm text-right">{t('runner.media')}</span>
+        <div>
+          {!mediaSrc ? (
+            <span className="text-sm text-muted-foreground">{t('runner.noMedia')}</span>
+          ) : (
+            <div className="rounded-lg border border-border p-3 space-y-2">
+              <MediaPreview media={question.media} fullscreenButton playbackControls />
+            </div>
+          )}
         </div>
 
-        <span className="font-semibold text-sm text-right pt-1">Answers</span>
+        <span className="font-semibold text-sm text-right pt-1">{t('runner.answers')}</span>
         <div className="space-y-1.5">
           {answerOptions.length > 0 ? (
             answerOptions.map((opt, index) => {
@@ -58,24 +61,29 @@ const BasicQuestionViewer = ({
                         ? 'bg-red-100 border-red-300 text-red-900'
                         : isMarked
                           ? 'bg-amber-100 border-amber-300 text-amber-900'
-                          : 'bg-muted/50 border-border hover:bg-muted'
+                          : opt.correct
+                            ? 'bg-muted/50 border-green-400/50 hover:bg-muted'
+                            : 'bg-muted/50 border-border hover:bg-muted'
                   )}
                 >
                   <strong>{String.fromCharCode(65 + index)}.</strong> {opt.text}
+                  {opt.correct && !answerRevealed && (
+                    <span className="text-green-600 ml-1">{'\u2713'}</span>
+                  )}
                   {answerRevealed && opt.correct && ' \u2714'}
                   {isMarked && !answerRevealed && ' \u25C0'}
                 </button>
               )
             })
           ) : (
-            <span className="text-sm text-muted-foreground">No answer options</span>
+            <span className="text-sm text-muted-foreground">{t('runner.noAnswerOptions')}</span>
           )}
         </div>
 
-        <span className="font-semibold text-sm text-right">Used</span>
+        <span className="font-semibold text-sm text-right">{t('runner.used')}</span>
         <div className="flex items-center gap-2">
           <Label htmlFor="used-switch" className="text-sm">
-            {used ? 'Yes' : 'No'}
+            {used ? t('runner.yes') : t('runner.no')}
           </Label>
           <input
             id="used-switch"
@@ -87,10 +95,10 @@ const BasicQuestionViewer = ({
           />
         </div>
 
-        <span className="font-semibold text-sm text-right">Reveal</span>
+        <span className="font-semibold text-sm text-right">{t('runner.reveal')}</span>
         <div className="flex items-center gap-2">
           <Label htmlFor="reveal-switch" className="text-sm">
-            {answerRevealed ? 'Yes' : 'No'}
+            {answerRevealed ? t('runner.yes') : t('runner.no')}
           </Label>
           <input
             id="reveal-switch"

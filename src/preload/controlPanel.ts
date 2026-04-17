@@ -3,13 +3,16 @@ import { IPC } from '@shared/types/ipc'
 import type { GameState } from '@shared/types/state'
 import type { Category, Question, AnswerOption, QuizMeta, Stats } from '@shared/types/quiz'
 
+/** Subscribe to an IPC event carrying a single payload. Returns an unsubscribe function. */
+function subscribeWith<T>(channel: string, callback: (payload: T) => void): () => void {
+  const handler = (_event: Electron.IpcRendererEvent, payload: T): void => callback(payload)
+  ipcRenderer.on(channel, handler)
+  return () => ipcRenderer.removeListener(channel, handler)
+}
+
 const api = {
   // ── State subscription ─────────────────────────────────────────
-  onStateUpdate: (callback: (state: GameState) => void): (() => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, state: GameState): void => callback(state)
-    ipcRenderer.on(IPC.STATE_UPDATE, handler)
-    return () => ipcRenderer.removeListener(IPC.STATE_UPDATE, handler)
-  },
+  onStateUpdate: (cb: (state: GameState) => void) => subscribeWith<GameState>(IPC.STATE_UPDATE, cb),
 
   // ── File operations ────────────────────────────────────────────
   fileNew: (): Promise<string | null> => ipcRenderer.invoke(IPC.FILE_NEW),
@@ -65,6 +68,8 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_DATE, date),
   quizMetaUpdateLocation: (location: string): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_LOCATION, location),
+  quizMetaUpdateSplash: (splash: string): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_SPLASH, splash),
 
   // ── Stats ──────────────────────────────────────────────────────
   quizStats: (): Promise<Stats> => ipcRenderer.invoke(IPC.QUIZ_STATS),
@@ -82,6 +87,7 @@ const api = {
   prevTeam: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_PREV_TEAM),
 
   // ── Screen transitions ─────────────────────────────────────────
+  showSplash: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_SHOW_SPLASH),
   showCategories: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_SHOW_CATEGORIES),
   showQuestions: (categoryId: number): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_SHOW_QUESTIONS, categoryId),
@@ -96,6 +102,24 @@ const api = {
     ipcRenderer.invoke(IPC.GAME_MARK_USED, questionId),
   markAnswer: (answerOptionId: number | null): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_MARK_ANSWER, answerOptionId),
+
+  // ── Media management ───────────────────────────────────────────
+  mediaPickFile: (questionId: number): Promise<string | null> =>
+    ipcRenderer.invoke(IPC.QUIZ_MEDIA_PICK, questionId),
+  mediaRemoveFile: (questionId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_MEDIA_REMOVE, questionId),
+
+  // ── Media playback ─────────────────────────────────────────────
+  mediaPlay: (): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_PLAY),
+  mediaPause: (): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_PAUSE),
+  mediaStop: (): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_STOP),
+  mediaToggleFullscreen: (): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_TOGGLE_FULLSCREEN),
+
+  // ── Settings ───────────────────────────────────────────────────
+  getLanguage: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_LANGUAGE),
+  setLanguage: (lang: string): Promise<void> => ipcRenderer.invoke(IPC.SETTINGS_SET_LANGUAGE, lang),
+  onLanguageChange: (cb: (lang: string) => void) =>
+    subscribeWith<string>(IPC.SETTINGS_SET_LANGUAGE, cb),
 
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),

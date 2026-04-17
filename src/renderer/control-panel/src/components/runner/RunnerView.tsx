@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import TeamTable from './TeamTable'
 import QuizTree from '../builder/QuizTree'
 import { useGameState } from '@renderer/hooks/useGameState'
@@ -6,27 +7,28 @@ import { useQuestion } from '@renderer/hooks/useQuestion'
 import { useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
 import BasicQuestionViewer from './BasicQuestionViewer'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
+import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
 
 const QuestionColumn = ({ id }: { id: number }) => {
+  const { t } = useTranslation()
   const { revealedAnswers, usedQuestions, activeQuestion } = useGameState()
   const question = useQuestion(id)
   const answerOptions = useAnswerOptions(id)
 
-  if (question.isLoading || answerOptions.isLoading) {
-    return <QueryLoading label="Loading question..." />
+  const guard = usePairQueryState(question, answerOptions)
+  if (!guard.ok) {
+    if (guard.loading) return <QueryLoading label={t('builder.loadingQuestion')} />
+    if (guard.errorMessage) return <QueryError message={guard.errorMessage} />
+    return null
   }
-  if (question.error || answerOptions.error) {
-    return <QueryError message={question.error?.message ?? answerOptions.error?.message} />
-  }
-  if (!question.data || !answerOptions.data) return null
 
   const markedAnswerId =
     activeQuestion?.question.id === id ? (activeQuestion.markedAnswerId ?? null) : null
 
   return (
     <BasicQuestionViewer
-      question={question.data}
-      answerOptions={answerOptions.data}
+      question={question.data!}
+      answerOptions={answerOptions.data!}
       answerRevealed={revealedAnswers.includes(id)}
       onRevealAnswer={() => window.api.toggleAnswer(id)}
       markedAnswerId={markedAnswerId}
@@ -39,7 +41,7 @@ const QuestionColumn = ({ id }: { id: number }) => {
 
 export const RunnerView = () => {
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null)
-  const { categories } = useGameState()
+  const { categories, usedQuestions } = useGameState()
 
   if (!categories.length) return null
 
@@ -67,6 +69,7 @@ export const RunnerView = () => {
             setSelectedCategory={handleCategoryClicked}
             setSelectedQuestion={handleQuestionClicked}
             editable={false}
+            usedQuestions={usedQuestions}
           />
         </div>
         <div className="flex-1 pl-3">

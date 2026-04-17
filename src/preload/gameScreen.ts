@@ -2,12 +2,33 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '@shared/types/ipc'
 import type { GameState } from '@shared/types/state'
 
+/** Subscribe to a bare IPC event (no payload). Returns an unsubscribe function. */
+function subscribe(channel: string, callback: () => void): () => void {
+  const handler = (): void => callback()
+  ipcRenderer.on(channel, handler)
+  return () => ipcRenderer.removeListener(channel, handler)
+}
+
+/** Subscribe to an IPC event carrying a single payload. Returns an unsubscribe function. */
+function subscribeWith<T>(channel: string, callback: (payload: T) => void): () => void {
+  const handler = (_event: Electron.IpcRendererEvent, payload: T): void => callback(payload)
+  ipcRenderer.on(channel, handler)
+  return () => ipcRenderer.removeListener(channel, handler)
+}
+
 const api = {
-  onStateUpdate: (callback: (state: GameState) => void): (() => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, state: GameState): void => callback(state)
-    ipcRenderer.on(IPC.STATE_UPDATE, handler)
-    return () => ipcRenderer.removeListener(IPC.STATE_UPDATE, handler)
-  }
+  onStateUpdate: (cb: (state: GameState) => void) => subscribeWith<GameState>(IPC.STATE_UPDATE, cb),
+
+  // ── Media playback listeners (main -> game screen) ─────────────
+  onMediaPlay: (cb: () => void) => subscribe(IPC.MEDIA_PLAY, cb),
+  onMediaPause: (cb: () => void) => subscribe(IPC.MEDIA_PAUSE, cb),
+  onMediaStop: (cb: () => void) => subscribe(IPC.MEDIA_STOP, cb),
+  onMediaToggleFullscreen: (cb: () => void) => subscribe(IPC.MEDIA_TOGGLE_FULLSCREEN, cb),
+
+  // ── Settings (language sync) ───────────────────────────────────
+  getLanguage: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_LANGUAGE),
+  onLanguageChange: (cb: (lang: string) => void) =>
+    subscribeWith<string>(IPC.SETTINGS_SET_LANGUAGE, cb)
 }
 
 export type GameScreenApi = typeof api
