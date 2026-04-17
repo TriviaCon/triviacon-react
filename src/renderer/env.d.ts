@@ -57,6 +57,7 @@ declare global {
       quizMetaUpdateAuthor: (author: string) => Promise<void>
       quizMetaUpdateDate: (date: string) => Promise<void>
       quizMetaUpdateLocation: (location: string) => Promise<void>
+      quizMetaUpdateSplash: (splash: string) => Promise<void>
 
       // --- Stats ---
       quizStats: () => Promise<Stats>
@@ -71,6 +72,7 @@ declare global {
       prevTeam: () => Promise<void>
 
       // --- Screen transitions ---
+      showSplash: () => Promise<void>
       showCategories: () => Promise<void>
       showQuestions: (categoryId: number) => Promise<void>
       showQuestion: (questionId: number) => Promise<void>
@@ -80,6 +82,27 @@ declare global {
       toggleAnswer: (questionId: number) => Promise<void>
       markUsed: (questionId: number) => Promise<void>
       markAnswer: (answerOptionId: number | null) => Promise<void>
+
+      // --- Media management ---
+      mediaPickFile: (questionId: number) => Promise<string | null>
+      mediaRemoveFile: (questionId: number) => Promise<void>
+
+      // --- Media playback ---
+      mediaPlay: () => Promise<void>
+      mediaPause: () => Promise<void>
+      mediaStop: () => Promise<void>
+      mediaToggleFullscreen: () => Promise<void>
+
+      // --- Media playback listeners (game screen only) ---
+      onMediaPlay: (callback: () => void) => () => void
+      onMediaPause: (callback: () => void) => () => void
+      onMediaStop: (callback: () => void) => () => void
+      onMediaToggleFullscreen: (callback: () => void) => () => void
+
+      // --- Settings ---
+      getLanguage: () => Promise<string>
+      setLanguage: (lang: string) => Promise<void>
+      onLanguageChange: (callback: (lang: string) => void) => () => void
 
       // --- Display management (control panel only) ---
       openGameScreen: () => Promise<void>

@@ -1,12 +1,9 @@
 import { BrowserWindow, ipcMain, dialog } from 'electron'
 import { IPC } from '@shared/types/ipc'
+import { getSetting, setSetting } from '../settings'
 import { QUIZ_FILE_FILTER } from '@shared/constants'
 import db from '../../data/db'
-import categories from '../../data/categories'
-import questions from '../../data/questions'
-import answerOptions from '../../data/answerOptions'
-import meta from '../../data/meta'
-import teams from '../../data/teams'
+import * as store from '../../data/quizStore'
 import { GameEngine } from '../state/GameEngine'
 import { getControlPanelWindow, getGameScreenWindow } from '../windows'
 
@@ -32,10 +29,10 @@ function broadcastState(): void {
   safeSend(getGameScreenWindow(), IPC.STATE_UPDATE, state)
 }
 
-/** Persist teams to SQLite after any team mutation. */
-async function persistTeams(): Promise<void> {
+/** Persist teams to the quiz document after any team mutation. */
+function persistTeams(): void {
   try {
-    await teams.saveAll(engine.getState().teams)
+    store.teamsSaveAll(engine.getState().teams)
   } catch (err) {
     console.error('Failed to persist teams:', err)
   }
@@ -51,9 +48,10 @@ export function registerIpcHandlers(): void {
     if (result.canceled || !result.filePath) return null
     try {
       await db.new(result.filePath)
-      const quizMeta = await meta.get()
-      const cats = await categories.all()
-      engine.loadQuiz(result.filePath, quizMeta, cats)
+      const quizMeta = store.metaGet()
+      const cats = store.categoriesAll()
+      const qMap = store.questionCategoryMap()
+      engine.loadQuiz(result.filePath, quizMeta, cats, qMap)
       broadcastState()
       return result.filePath
     } catch (err) {
@@ -71,10 +69,11 @@ export function registerIpcHandlers(): void {
     const filePath = result.filePaths[0]
     try {
       await db.open(filePath)
-      const quizMeta = await meta.get()
-      const cats = await categories.all()
-      const savedTeams = await teams.all()
-      engine.loadQuiz(filePath, quizMeta, cats, savedTeams)
+      const quizMeta = store.metaGet()
+      const cats = store.categoriesAll()
+      const qMap = store.questionCategoryMap()
+      const savedTeams = store.teamsAll()
+      engine.loadQuiz(filePath, quizMeta, cats, qMap, savedTeams)
       broadcastState()
       return filePath
     } catch (err) {
@@ -83,9 +82,14 @@ export function registerIpcHandlers(): void {
     }
   })
 
-  ipcMain.handle(IPC.FILE_SAVE, () => {
-    // Current file is already being written to in-place via SQLite
-    return true
+  ipcMain.handle(IPC.FILE_SAVE, async () => {
+    try {
+      await db.save()
+      return true
+    } catch (err) {
+      console.error('FILE_SAVE failed:', err)
+      throw err
+    }
   })
 
   ipcMain.handle(IPC.FILE_SAVE_AS, async () => {
@@ -94,12 +98,7 @@ export function registerIpcHandlers(): void {
     })
     if (result.canceled || !result.filePath) return null
     try {
-      await db.copyTo(result.filePath)
-      await db.open(result.filePath)
-      const quizMeta = await meta.get()
-      const cats = await categories.all()
-      const savedTeams = await teams.all()
-      engine.loadQuiz(result.filePath, quizMeta, cats, savedTeams)
+      await db.saveTo(result.filePath)
       broadcastState()
       return result.filePath
     } catch (err) {
@@ -110,125 +109,150 @@ export function registerIpcHandlers(): void {
 
   // ── Categories ───────────────────────────────────────────────────
 
-  ipcMain.handle(IPC.QUIZ_CATEGORIES_ALL, () => categories.all())
+  ipcMain.handle(IPC.QUIZ_CATEGORIES_ALL, () => store.categoriesAll())
 
-  ipcMain.handle(IPC.QUIZ_CATEGORY_BY_ID, (_, id: number) => categories.byId(id))
+  ipcMain.handle(IPC.QUIZ_CATEGORY_BY_ID, (_, id: number) => store.categoryById(id))
 
-  ipcMain.handle(IPC.QUIZ_CATEGORY_CREATE, async (_, name: string) => {
-    const id = await categories.create(name)
-    engine.updateCategories(await categories.all())
+  ipcMain.handle(IPC.QUIZ_CATEGORY_CREATE, (_, name: string) => {
+    const id = store.categoryCreate(name)
+    engine.updateCategories(store.categoriesAll())
     broadcastState()
     return id
   })
 
-  ipcMain.handle(IPC.QUIZ_CATEGORY_UPDATE, async (_, id: number, name: string) => {
-    await categories.update(id, name)
-    engine.updateCategories(await categories.all())
+  ipcMain.handle(IPC.QUIZ_CATEGORY_UPDATE, (_, id: number, name: string) => {
+    store.categoryUpdate(id, name)
+    engine.updateCategories(store.categoriesAll())
     broadcastState()
   })
 
-  ipcMain.handle(IPC.QUIZ_CATEGORY_REMOVE, async (_, id: number) => {
-    await categories.remove(id)
-    engine.updateCategories(await categories.all())
+  ipcMain.handle(IPC.QUIZ_CATEGORY_REMOVE, (_, id: number) => {
+    store.categoryRemove(id)
+    engine.updateCategories(store.categoriesAll())
     broadcastState()
   })
 
   // ── Questions ────────────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_QUESTIONS_BY_CATEGORY, (_, categoryId: number) =>
-    questions.allByCategoryId(categoryId)
+    store.questionsAllByCategoryId(categoryId)
   )
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_BY_ID, (_, id: number) => questions.byId(id))
+  ipcMain.handle(IPC.QUIZ_QUESTION_BY_ID, (_, id: number) => store.questionById(id))
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question) => questions.create(question))
+  ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question) => store.questionCreate(question))
 
   ipcMain.handle(IPC.QUIZ_QUESTION_UPDATE, (_, id: number, updates) =>
-    questions.update(id, updates)
+    store.questionUpdate(id, updates)
   )
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_DELETE, (_, id: number) => questions.delete(id))
+  ipcMain.handle(IPC.QUIZ_QUESTION_DELETE, (_, id: number) => store.questionDelete(id))
 
   // ── Answer Options ───────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_ANSWER_OPTIONS_BY_QUESTION, (_, questionId: number) =>
-    answerOptions.byQuestionId(questionId)
+    store.answerOptionsByQuestionId(questionId)
   )
 
   ipcMain.handle(
     IPC.QUIZ_ANSWER_OPTION_CREATE,
     (_, questionId: number, text?: string, correct?: boolean, sortOrder?: number) =>
-      answerOptions.create(questionId, text, correct, sortOrder)
+      store.answerOptionCreate(questionId, text, correct, sortOrder)
   )
 
   ipcMain.handle(IPC.QUIZ_ANSWER_OPTION_UPDATE, (_, id: number, fields) =>
-    answerOptions.update(id, fields)
+    store.answerOptionUpdate(id, fields)
   )
 
-  ipcMain.handle(IPC.QUIZ_ANSWER_OPTION_REMOVE, (_, id: number) => answerOptions.remove(id))
+  ipcMain.handle(IPC.QUIZ_ANSWER_OPTION_REMOVE, (_, id: number) => store.answerOptionRemove(id))
 
   // ── Meta ─────────────────────────────────────────────────────────
 
-  ipcMain.handle(IPC.QUIZ_META_GET, () => meta.get())
+  ipcMain.handle(IPC.QUIZ_META_GET, () => store.metaGet())
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_NAME, async (_, name: string) => {
-    await meta.updateName(name)
-    engine.updateMeta(await meta.get())
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_NAME, (_, name: string) => {
+    store.metaUpdateName(name)
+    engine.updateMeta(store.metaGet())
     broadcastState()
   })
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_AUTHOR, async (_, author: string) => {
-    await meta.updateAuthor(author)
-    engine.updateMeta(await meta.get())
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_AUTHOR, (_, author: string) => {
+    store.metaUpdateAuthor(author)
+    engine.updateMeta(store.metaGet())
     broadcastState()
   })
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_DATE, async (_, date: string) => {
-    await meta.updateDate(date)
-    engine.updateMeta(await meta.get())
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_DATE, (_, date: string) => {
+    store.metaUpdateDate(date)
+    engine.updateMeta(store.metaGet())
     broadcastState()
   })
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_LOCATION, async (_, location: string) => {
-    await meta.updateLocation(location)
-    engine.updateMeta(await meta.get())
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_LOCATION, (_, location: string) => {
+    store.metaUpdateLocation(location)
+    engine.updateMeta(store.metaGet())
     broadcastState()
   })
 
-  ipcMain.handle(IPC.QUIZ_META_UPDATE_SPLASH, async (_, splash: string) => {
-    await meta.updateSplash(splash)
-    engine.updateMeta(await meta.get())
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_SPLASH, (_, splash: string) => {
+    store.metaUpdateSplash(splash)
+    engine.updateMeta(store.metaGet())
     broadcastState()
+  })
+
+  // ── Media management ─────────────────────────────────────────────
+
+  ipcMain.handle(IPC.QUIZ_MEDIA_PICK, async (_, questionId: number) => {
+    const result = await dialog.showOpenDialog({
+      filters: [
+        { name: 'Media', extensions: ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'mp4', 'webm', 'mov', 'png', 'jpg', 'jpeg', 'gif', 'webp'] }
+      ],
+      properties: ['openFile']
+    })
+    if (result.canceled || result.filePaths.length === 0) return null
+    const sourcePath = result.filePaths[0]
+    const filename = sourcePath.split(/[\\/]/).pop()!
+    const mediaPath = await db.attachMedia(sourcePath, filename)
+    store.questionUpdate(questionId, { media: mediaPath })
+    return mediaPath
+  })
+
+  ipcMain.handle(IPC.QUIZ_MEDIA_REMOVE, async (_, questionId: number) => {
+    const question = store.questionById(questionId)
+    if (question?.media) {
+      await db.removeMedia(question.media)
+    }
+    store.questionUpdate(questionId, { media: null })
   })
 
   // ── Stats ────────────────────────────────────────────────────────
 
-  ipcMain.handle(IPC.QUIZ_STATS, () => db.getStats())
+  ipcMain.handle(IPC.QUIZ_STATS, () => store.getStats())
 
   // ── Team management ──────────────────────────────────────────────
 
-  ipcMain.handle(IPC.GAME_ADD_TEAM, async (_, name: string) => {
+  ipcMain.handle(IPC.GAME_ADD_TEAM, (_, name: string) => {
     engine.addTeam(name)
     broadcastState()
-    await persistTeams()
+    persistTeams()
   })
 
-  ipcMain.handle(IPC.GAME_REMOVE_TEAM, async (_, teamId: string) => {
+  ipcMain.handle(IPC.GAME_REMOVE_TEAM, (_, teamId: string) => {
     engine.removeTeam(teamId)
     broadcastState()
-    await persistTeams()
+    persistTeams()
   })
 
-  ipcMain.handle(IPC.GAME_RENAME_TEAM, async (_, teamId: string, name: string) => {
+  ipcMain.handle(IPC.GAME_RENAME_TEAM, (_, teamId: string, name: string) => {
     engine.renameTeam(teamId, name)
     broadcastState()
-    await persistTeams()
+    persistTeams()
   })
 
-  ipcMain.handle(IPC.GAME_UPDATE_SCORE, async (_, teamId: string, delta: number) => {
+  ipcMain.handle(IPC.GAME_UPDATE_SCORE, (_, teamId: string, delta: number) => {
     engine.updateScore(teamId, delta)
     broadcastState()
-    await persistTeams()
+    persistTeams()
   })
 
   ipcMain.handle(IPC.GAME_SET_CURRENT_TEAM, (_, teamId: string) => {
@@ -248,21 +272,26 @@ export function registerIpcHandlers(): void {
 
   // ── Screen transitions ───────────────────────────────────────────
 
+  ipcMain.handle(IPC.GAME_SHOW_SPLASH, () => {
+    engine.showSplash()
+    broadcastState()
+  })
+
   ipcMain.handle(IPC.GAME_SHOW_CATEGORIES, () => {
     engine.showCategories()
     broadcastState()
   })
 
-  ipcMain.handle(IPC.GAME_SHOW_QUESTIONS, async (_, categoryId: number) => {
-    const categoryQuestions = await questions.allByCategoryId(categoryId)
+  ipcMain.handle(IPC.GAME_SHOW_QUESTIONS, (_, categoryId: number) => {
+    const categoryQuestions = store.questionsAllByCategoryId(categoryId)
     engine.showQuestions(categoryId, categoryQuestions)
     broadcastState()
   })
 
-  ipcMain.handle(IPC.GAME_SHOW_QUESTION, async (_, questionId: number) => {
-    const question = await questions.byId(questionId)
+  ipcMain.handle(IPC.GAME_SHOW_QUESTION, (_, questionId: number) => {
+    const question = store.questionById(questionId)
     if (!question) return
-    const opts = await answerOptions.byQuestionId(questionId)
+    const opts = store.answerOptionsByQuestionId(questionId)
     engine.showQuestion(question, opts)
     broadcastState()
   })
@@ -289,10 +318,40 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  // ── Media playback (forward to game screen) ────────────────────
+
+  ipcMain.handle(IPC.MEDIA_PLAY, () => {
+    safeSend(getGameScreenWindow(), IPC.MEDIA_PLAY)
+  })
+
+  ipcMain.handle(IPC.MEDIA_PAUSE, () => {
+    safeSend(getGameScreenWindow(), IPC.MEDIA_PAUSE)
+  })
+
+  ipcMain.handle(IPC.MEDIA_STOP, () => {
+    safeSend(getGameScreenWindow(), IPC.MEDIA_STOP)
+  })
+
+  ipcMain.handle(IPC.MEDIA_TOGGLE_FULLSCREEN, () => {
+    safeSend(getGameScreenWindow(), IPC.MEDIA_TOGGLE_FULLSCREEN)
+  })
+
   // ── Game screen appearance ──────────────────────────────────────
 
   ipcMain.handle(IPC.GAME_TOGGLE_DARK_MODE, () => {
     engine.toggleDarkMode()
     broadcastState()
+  })
+
+  // ── Settings ───────────────────────────────────────────────────
+
+  ipcMain.handle(IPC.SETTINGS_GET_LANGUAGE, () => {
+    return getSetting('language')
+  })
+
+  ipcMain.handle(IPC.SETTINGS_SET_LANGUAGE, (_, lang: string) => {
+    setSetting('language', lang)
+    safeSend(getControlPanelWindow(), IPC.SETTINGS_SET_LANGUAGE, lang)
+    safeSend(getGameScreenWindow(), IPC.SETTINGS_SET_LANGUAGE, lang)
   })
 }

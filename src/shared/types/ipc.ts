@@ -34,6 +34,10 @@ export const IPC = {
 
   QUIZ_STATS: 'quiz:stats',
 
+  // Media management
+  QUIZ_MEDIA_PICK: 'quiz:media:pick',
+  QUIZ_MEDIA_REMOVE: 'quiz:media:remove',
+
   // Team management
   GAME_ADD_TEAM: 'game:addTeam',
   GAME_REMOVE_TEAM: 'game:removeTeam',
@@ -44,6 +48,7 @@ export const IPC = {
   GAME_PREV_TEAM: 'game:prevTeam',
 
   // Screen transitions
+  GAME_SHOW_SPLASH: 'game:showSplash',
   GAME_SHOW_CATEGORIES: 'game:showCategories',
   GAME_SHOW_QUESTIONS: 'game:showQuestions',
   GAME_SHOW_QUESTION: 'game:showQuestion',
@@ -54,11 +59,21 @@ export const IPC = {
   GAME_MARK_USED: 'game:markUsed',
   GAME_MARK_ANSWER: 'game:markAnswer',
 
+  // Media control (control panel -> main -> game screen)
+  MEDIA_PLAY: 'media:play',
+  MEDIA_PAUSE: 'media:pause',
+  MEDIA_STOP: 'media:stop',
+  MEDIA_TOGGLE_FULLSCREEN: 'media:toggleFullscreen',
+
   // Game screen appearance
   GAME_TOGGLE_DARK_MODE: 'game:toggleDarkMode',
 
   // State push (main -> both renderers)
   STATE_UPDATE: 'state:update',
+
+  // Settings
+  SETTINGS_GET_LANGUAGE: 'settings:getLanguage',
+  SETTINGS_SET_LANGUAGE: 'settings:setLanguage',
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',

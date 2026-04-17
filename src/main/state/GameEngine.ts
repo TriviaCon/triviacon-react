@@ -20,13 +20,20 @@ export class GameEngine {
 
   // ── Quiz lifecycle ───────────────────────────────────────────
 
-  loadQuiz(filePath: string, meta: QuizMeta, categories: Category[], savedTeams?: Team[]): void {
+  loadQuiz(
+    filePath: string,
+    meta: QuizMeta,
+    categories: Category[],
+    questionCategoryMap: Record<number, number>,
+    savedTeams?: Team[]
+  ): void {
     this.state = {
       ...createInitialState(),
       phase: GamePhase.Builder,
       quizFilePath: filePath,
       quizMeta: meta,
       categories,
+      questionCategoryMap,
       teams: savedTeams ?? []
     }
     if (savedTeams && savedTeams.length > 0) {
@@ -100,6 +107,11 @@ export class GameEngine {
   }
 
   // ── Screen transitions ───────────────────────────────────────
+
+  showSplash(): void {
+    this.state.phase = GamePhase.Splash
+    this.state.activeQuestion = null
+  }
 
   showCategories(): void {
     this.state.phase = GamePhase.Categories

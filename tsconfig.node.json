@@ -24,5 +24,9 @@
     "src/preload/**/*",
     "src/data/**/*",
     "src/shared/**/*"
+  ],
+  "exclude": [
+    "src/shared/hooks/**",
+    "src/shared/i18n.ts"
   ]
 }

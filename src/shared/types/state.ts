@@ -3,6 +3,7 @@ import type { AnswerOption, Category, Question, QuizMeta, Team } from './quiz'
 export enum GamePhase {
   Idle = 'idle',
   Builder = 'builder',
+  Splash = 'splash',
   Categories = 'categories',
   Questions = 'questions',
   Question = 'question',
@@ -28,6 +29,7 @@ export interface GameState {
   quizMeta: QuizMeta | null
   quizFilePath: string | null
   categories: Category[]
+  questionCategoryMap: Record<number, number>
   gameScreenDarkMode: boolean
 }
 
@@ -43,5 +45,6 @@ export const INITIAL_GAME_STATE: GameState = {
   quizMeta: null,
   quizFilePath: null,
   categories: [],
+  questionCategoryMap: {},
   gameScreenDarkMode: false
 }

@@ -3,6 +3,7 @@ export type QuestionType = 'multiple-choice' | 'single-answer' | 'list'
 export interface Category {
   id: number
   name: string
+  questionCount: number
 }
 
 export interface Question {
