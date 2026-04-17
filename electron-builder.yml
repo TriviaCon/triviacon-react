@@ -38,5 +38,5 @@ linux:
 npmRebuild: false
 publish:
   provider: github
-  owner: alucard87pl
-  repo: triviacon
+  owner: TriviaCon
+  repo: triviacon-react
