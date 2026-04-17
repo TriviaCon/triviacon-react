@@ -24,7 +24,7 @@ protocol.registerSchemesAsPrivileged([
 app.whenReady().then(async () => {
   await cleanupStaleRuntimeDirs()
 
-  electronApp.setAppUserModelId('io.github.alucard87pl.triviacon')
+  electronApp.setAppUserModelId('io.github.triviacon.triviacon')
 
   registerMediaProtocol()
 

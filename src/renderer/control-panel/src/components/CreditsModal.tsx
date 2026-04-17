@@ -18,7 +18,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
         </DialogHeader>
         <div className="space-y-3 text-sm">
           <p>
-            Version <kbd className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">0.1.0</kbd>
+            Version <kbd className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">0.9.0</kbd>
           </p>
           <p>Developed by TriviaCon Team:</p>
           <ul className="list-disc pl-5 space-y-1">
@@ -73,7 +73,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
               className="text-primary underline"
               onClick={(e) => {
                 e.preventDefault()
-                window.open('https://github.com/TriviaCon/triviacon-react', '_blank')
+                window.open('https://github.com/TriviaCon/triviacon', '_blank')
               }}
             >
               view the source on GitHub
@@ -86,7 +86,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
               className="text-primary underline"
               onClick={(e) => {
                 e.preventDefault()
-                window.open('https://github.com/TriviaCon/triviacon-react/issues', '_blank')
+                window.open('https://github.com/TriviaCon/triviacon/issues', '_blank')
               }}
             >
               report an issue
