@@ -1,6 +1,25 @@
 import { ExternalLink, Bug } from 'lucide-react'
 import Logo from './layout/Logo'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@renderer/components/ui/dialog'
+import { version } from '../../../../../../package.json'
+
+const platformLabel: Record<string, string> = {
+  win32: 'Windows',
+  linux: 'Linux',
+  darwin: 'macOS'
+}
+
+function buildIssueUrl(): string {
+  const platform = platformLabel[window.api.platform] ?? window.api.platform
+  const body = `**Wersja:** ${version}\n**System:** ${platform}\n\n<!-- Opisz błąd poniżej -->`
+  const params = new URLSearchParams({
+    template: 'bug_report.yml',
+    title: 'Bug: ',
+    labels: 'bug',
+    body
+  })
+  return `https://github.com/TriviaCon/triviacon/issues/new?${params.toString()}`
+}
 
 interface CreditsModalProps {
   show: boolean
@@ -18,7 +37,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
         </DialogHeader>
         <div className="space-y-3 text-sm">
           <p>
-            Version <kbd className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">0.9.0</kbd>
+            Version <kbd className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">{version}</kbd>
           </p>
           <p>Developed by TriviaCon Team:</p>
           <ul className="list-disc pl-5 space-y-1">
@@ -86,7 +105,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
               className="text-primary underline"
               onClick={(e) => {
                 e.preventDefault()
-                window.open('https://github.com/TriviaCon/triviacon/issues', '_blank')
+                window.open(buildIssueUrl(), '_blank')
               }}
             >
               report an issue
