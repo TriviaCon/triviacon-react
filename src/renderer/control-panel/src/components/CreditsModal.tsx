@@ -1,7 +1,7 @@
 import { ExternalLink, Bug } from 'lucide-react'
 import Logo from './layout/Logo'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@renderer/components/ui/dialog'
-import { version } from '../../../../../../package.json'
+declare const __APP_VERSION__: string
 
 const platformLabel: Record<string, string> = {
   win32: 'Windows',
@@ -11,7 +11,7 @@ const platformLabel: Record<string, string> = {
 
 function buildIssueUrl(): string {
   const platform = platformLabel[window.api.platform] ?? window.api.platform
-  const body = `**Wersja:** ${version}\n**System:** ${platform}\n\n<!-- Opisz błąd poniżej -->`
+  const body = `**Wersja:** ${__APP_VERSION__}\n**System:** ${platform}\n\n<!-- Opisz błąd poniżej -->`
   const params = new URLSearchParams({
     template: 'bug_report.yml',
     title: 'Bug: ',
@@ -37,7 +37,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
         </DialogHeader>
         <div className="space-y-3 text-sm">
           <p>
-            Version <kbd className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">{version}</kbd>
+            Version <kbd className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">{__APP_VERSION__}</kbd>
           </p>
           <p>Developed by TriviaCon Team:</p>
           <ul className="list-disc pl-5 space-y-1">
