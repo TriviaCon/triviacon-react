@@ -3,18 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f1117" />
   <title>Triviacon — Przenośny system do quizów na żywo</title>
   <meta name="description" content="Triviacon to darmowa, przenośna aplikacja desktopowa do prowadzenia quizów wiedzy na żywo. Dla Windows, Linux i macOS." />
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Triviacon — Portable live quiz host" />
+  <meta property="og:description" content="A free, portable desktop app for running trivia quiz nights. Windows, Linux, macOS." />
+  <meta property="og:image" content="https://triviacon.github.io/triviacon/icon.png" />
+  <meta property="og:url" content="https://triviacon.github.io/triviacon/" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <div class="lang-switch" role="group" aria-label="Language / Język">
+    <button type="button" data-lang-set="pl" class="lang-btn is-active">PL</button>
+    <button type="button" data-lang-set="en" class="lang-btn">EN</button>
+  </div>
+
   <header>
-    <div class="container">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-content">
+      <img src="icon.png" alt="" class="hero-mark" />
       <h1>Triviacon</h1>
-      <p class="tagline">Przenośna aplikacja do prowadzenia quizów na żywo</p>
-      <a href="https://github.com/TriviaCon/triviacon/releases/latest" class="btn btn-primary">
-        Pobierz najnowszą wersję
+      <p class="tagline" data-i18n="tagline">Przenośna aplikacja do prowadzenia quizów na żywo</p>
+      <p class="version-chip" data-version-chip>
+        <span class="dot"></span>
+        <span data-i18n="newIn">Nowość</span>
+        <span data-version-tag>v0.9.3</span>
+        <span data-i18n="newInFeature">— dwustopniowe wybieranie pytań</span>
+      </p>
+      <a href="#download" class="btn btn-primary btn-lg">
+        <span data-i18n="ctaDownload">Pobierz najnowszą wersję</span>
       </a>
     </div>
   </header>
@@ -22,107 +47,136 @@
   <main>
 
     <section class="container">
-      <h2>Czym jest Triviacon?</h2>
-      <p>
+      <h2 data-i18n="aboutTitle">Czym jest Triviacon?</h2>
+      <p data-i18n="aboutBody">
         Triviacon to darmowa aplikacja desktopowa dla organizatorów quizów wiedzy.
         Prowadzący zarządza grą z panelu kontrolnego, a uczestnicy śledzą rozgrywkę
         na osobnym ekranie — idealnym do wyświetlenia na projektorze lub telewizorze.
       </p>
       <ul class="features">
-        <li>Tworzenie quizów z kategoriami, pytaniami i odpowiedziami wielokrotnego wyboru</li>
-        <li>Załączanie mediów — obrazy, audio, wideo — bezpośrednio do pytań</li>
-        <li>Zarządzanie drużynami i punktacją w czasie rzeczywistym</li>
-        <li>Pliki quizów (<code>.tcq</code>) — samodzielne archiwa, łatwe do udostępniania</li>
-        <li>Interfejs w języku polskim i angielskim</li>
-        <li>W pełni przenośna — nie wymaga instalacji, działa z pendrive'a</li>
+        <li data-i18n="feature1">Tworzenie quizów z kategoriami, pytaniami i odpowiedziami wielokrotnego wyboru</li>
+        <li data-i18n="feature2">Załączanie mediów — obrazy, audio, wideo — bezpośrednio do pytań</li>
+        <li data-i18n="feature3">Zarządzanie drużynami i punktacją w czasie rzeczywistym</li>
+        <li data-i18n="feature4" data-i18n-html>Pliki quizów (<code>.tcq</code>) — samodzielne archiwa, łatwe do udostępniania</li>
+        <li data-i18n="feature5">Interfejs w języku polskim i angielskim</li>
+        <li data-i18n="feature6">W pełni przenośna — nie wymaga instalacji, działa z pendrive'a</li>
       </ul>
     </section>
 
-    <section class="downloads container">
-      <h2>Pobierz</h2>
-      <p class="downloads-note">Nie wymaga instalacji. Wypakuj i uruchom.</p>
+    <section id="download" class="downloads container">
+      <h2 data-i18n="downloadTitle">Pobierz</h2>
+      <p class="downloads-note" data-i18n="downloadNote">Nie wymaga instalacji. Wypakuj i uruchom.</p>
       <div class="platform-grid">
 
-        <div class="platform-card">
-          <div class="platform-icon">🪟</div>
+        <div class="platform-card" data-platform="win">
+          <div class="platform-icon" aria-hidden="true">
+            <!-- Windows -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+              <path d="M3 5.5 11 4.3v7.2H3z" />
+              <path d="M11 12.5v7.2L3 18.5v-6z" />
+              <path d="M12 4.15 22 2.7v8.8H12z" />
+              <path d="M12 12.5h10v8.8l-10-1.45z" />
+            </svg>
+          </div>
           <h3>Windows</h3>
-          <p>Wypakuj archiwum ZIP,<br>uruchom <code>triviacon.exe</code></p>
-          <a href="https://github.com/TriviaCon/triviacon/releases/latest" class="btn btn-secondary">
-            Pobierz dla Windows
+          <p data-i18n="winHint" data-i18n-html>Wypakuj archiwum ZIP,<br>uruchom <code>triviacon.exe</code></p>
+          <a href="https://github.com/TriviaCon/triviacon/releases/latest" class="btn btn-secondary" data-asset-pattern="win.zip">
+            <span data-i18n="downloadFor">Pobierz dla</span> Windows
           </a>
         </div>
 
-        <div class="platform-card">
-          <div class="platform-icon">🐧</div>
+        <div class="platform-card" data-platform="linux">
+          <div class="platform-icon" aria-hidden="true">
+            <!-- Linux (penguin-ish abstract) -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 4.5c-1 1.6-1 3.7-.4 5.5C8 11.5 6 13.5 6 16c0 2.4 1.6 4 3.5 4.4 0 0 .8-1.4 2.5-1.4s2.5 1.4 2.5 1.4C16.4 20 18 18.4 18 16c0-2.5-2-4.5-2.6-6 .6-1.8.6-3.9-.4-5.5" />
+              <circle cx="10.3" cy="9" r="0.8" fill="currentColor" />
+              <circle cx="13.7" cy="9" r="0.8" fill="currentColor" />
+              <path d="M11 12.2c.6.4 1.4.4 2 0" />
+            </svg>
+          </div>
           <h3>Linux</h3>
-          <p>Ustaw uprawnienia do uruchamiania,<br>uruchom plik <code>.AppImage</code></p>
-          <a href="https://github.com/TriviaCon/triviacon/releases/latest" class="btn btn-secondary">
-            Pobierz dla Linux
+          <p data-i18n="linuxHint" data-i18n-html>Ustaw uprawnienia do uruchamiania,<br>uruchom plik <code>.AppImage</code></p>
+          <a href="https://github.com/TriviaCon/triviacon/releases/latest" class="btn btn-secondary" data-asset-pattern=".AppImage">
+            <span data-i18n="downloadFor">Pobierz dla</span> Linux
           </a>
         </div>
 
-        <div class="platform-card">
-          <div class="platform-icon">🍎</div>
+        <div class="platform-card" data-platform="mac">
+          <div class="platform-icon" aria-hidden="true">
+            <!-- Apple -->
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M16.4 12.5c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.7-1.8-3.3-1.8-1.4-.1-2.7.8-3.4.8-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.7 1.1 8.9.8 1.1 1.7 2.3 2.9 2.2 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.2.9-1.3 1.3-2.5 1.3-2.6-.1 0-2.7-1-2.7-3.3zM14.2 5.6c.6-.8 1-1.9.9-3-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.8-.9 2.9 1 .1 2.1-.5 2.7-1.3z" />
+            </svg>
+          </div>
           <h3>macOS</h3>
-          <p>Wypakuj archiwum ZIP,<br>uruchom <code>Triviacon.app</code></p>
-          <a href="https://github.com/TriviaCon/triviacon/releases/latest" class="btn btn-secondary">
-            Pobierz dla macOS
-          </a>
+          <p data-i18n="macHint" data-i18n-html>Wypakuj archiwum ZIP,<br>uruchom <code>Triviacon.app</code></p>
+          <div class="mac-download-row">
+            <a href="https://github.com/TriviaCon/triviacon/releases/latest" class="btn btn-secondary" data-asset-pattern="-mac.zip" data-asset-exclude="arm64">
+              Intel
+            </a>
+            <a href="https://github.com/TriviaCon/triviacon/releases/latest" class="btn btn-secondary" data-asset-pattern="arm64-mac.zip">
+              Apple Silicon
+            </a>
+          </div>
         </div>
 
       </div>
+      <p class="release-meta" data-release-meta>
+        <span data-i18n="loadingRelease">Ładuję informacje o najnowszym wydaniu…</span>
+      </p>
     </section>
 
     <section class="how-to container">
-      <h2>Jak to działa?</h2>
+      <h2 data-i18n="howToTitle">Jak to działa?</h2>
       <ol class="steps">
         <li>
           <span class="step-num">1</span>
           <div>
-            <strong>Uruchom Triviacon</strong>
-            <p>Panel kontrolny otwiera się automatycznie.</p>
+            <strong data-i18n="step1Title">Uruchom Triviacon</strong>
+            <p data-i18n="step1Body">Panel kontrolny otwiera się automatycznie.</p>
           </div>
         </li>
         <li>
           <span class="step-num">2</span>
           <div>
-            <strong>Przygotuj quiz</strong>
-            <p>Stwórz nowy plik lub otwórz istniejący. Dodaj kategorie, pytania i opcjonalne media w zakładce Kreator.</p>
+            <strong data-i18n="step2Title">Przygotuj quiz</strong>
+            <p data-i18n="step2Body">Stwórz nowy plik lub otwórz istniejący. Dodaj kategorie, pytania i opcjonalne media w zakładce Kreator.</p>
           </div>
         </li>
         <li>
           <span class="step-num">3</span>
           <div>
-            <strong>Dodaj drużyny</strong>
-            <p>Wpisz nazwy drużyn w zakładce Rozgrywka przed rozpoczęciem gry.</p>
+            <strong data-i18n="step3Title">Dodaj drużyny</strong>
+            <p data-i18n="step3Body">Wpisz nazwy drużyn w zakładce Rozgrywka przed rozpoczęciem gry.</p>
           </div>
         </li>
         <li>
           <span class="step-num">4</span>
           <div>
-            <strong>Otwórz ekran gry</strong>
-            <p>Kliknij ikonę monitora na pasku narzędzi i skieruj projektor lub drugi ekran na to okno.</p>
+            <strong data-i18n="step4Title">Otwórz ekran gry</strong>
+            <p data-i18n="step4Body">Kliknij ikonę monitora na pasku narzędzi i skieruj projektor lub drugi ekran na to okno.</p>
           </div>
         </li>
         <li>
           <span class="step-num">5</span>
           <div>
-            <strong>Prowadź quiz</strong>
-            <p>Nawiguj po pytaniach z panelu kontrolnego, odkrywaj odpowiedzi i śledź punktację na żywo.</p>
+            <strong data-i18n="step5Title">Prowadź quiz</strong>
+            <p data-i18n="step5Body">Nawiguj po pytaniach z panelu kontrolnego, odkrywaj odpowiedzi i śledź punktację na żywo.</p>
           </div>
         </li>
       </ol>
     </section>
 
     <section class="container cta">
-      <h2>Open source</h2>
-      <p>
+      <h2 data-i18n="osTitle">Open source</h2>
+      <p data-i18n="osBody" data-i18n-html>
         Triviacon jest darmowy i otwartoźródłowy.<br>
         Znalazłeś błąd albo masz pomysł na ulepszenie?
       </p>
       <div class="cta-buttons">
         <a href="https://github.com/TriviaCon/triviacon" class="btn btn-secondary">GitHub</a>
-        <a href="https://github.com/TriviaCon/triviacon/issues" class="btn btn-secondary">Zgłoś problem</a>
+        <a href="https://github.com/TriviaCon/triviacon/issues" class="btn btn-secondary" data-i18n="reportIssue">Zgłoś problem</a>
       </div>
     </section>
 
@@ -130,9 +184,210 @@
 
   <footer>
     <div class="container">
-      <p>Triviacon &copy; 2025 Marcin &ldquo;Aluś&rdquo; Jędrecki &mdash; licencja MIT</p>
+      <p>
+        Triviacon &copy; <span data-year>2026</span> Marcin &ldquo;Aluś&rdquo; Jędrecki &mdash;
+        <span data-i18n="license">licencja MIT</span>
+      </p>
     </div>
   </footer>
+
+  <script>
+    // ── i18n strings ───────────────────────────────────────────────
+    const STRINGS = {
+      pl: {
+        pageTitle: "Triviacon — Przenośny system do quizów na żywo",
+        pageDescription: "Triviacon to darmowa, przenośna aplikacja desktopowa do prowadzenia quizów wiedzy na żywo. Dla Windows, Linux i macOS.",
+        tagline: "Przenośna aplikacja do prowadzenia quizów na żywo",
+        newIn: "Nowość",
+        newInFeature: "— dwustopniowe wybieranie pytań",
+        ctaDownload: "Pobierz najnowszą wersję",
+        aboutTitle: "Czym jest Triviacon?",
+        aboutBody: "Triviacon to darmowa aplikacja desktopowa dla organizatorów quizów wiedzy. Prowadzący zarządza grą z panelu kontrolnego, a uczestnicy śledzą rozgrywkę na osobnym ekranie — idealnym do wyświetlenia na projektorze lub telewizorze.",
+        feature1: "Tworzenie quizów z kategoriami, pytaniami i odpowiedziami wielokrotnego wyboru",
+        feature2: "Załączanie mediów — obrazy, audio, wideo — bezpośrednio do pytań",
+        feature3: "Zarządzanie drużynami i punktacją w czasie rzeczywistym",
+        feature4: "Pliki quizów (<code>.tcq</code>) — samodzielne archiwa, łatwe do udostępniania",
+        feature5: "Interfejs w języku polskim i angielskim",
+        feature6: "W pełni przenośna — nie wymaga instalacji, działa z pendrive'a",
+        downloadTitle: "Pobierz",
+        downloadNote: "Nie wymaga instalacji. Wypakuj i uruchom.",
+        winHint: "Wypakuj archiwum ZIP,<br>uruchom <code>triviacon.exe</code>",
+        linuxHint: "Ustaw uprawnienia do uruchamiania,<br>uruchom plik <code>.AppImage</code>",
+        macHint: "Wypakuj archiwum ZIP,<br>uruchom <code>Triviacon.app</code>",
+        downloadFor: "Pobierz dla",
+        loadingRelease: "Ładuję informacje o najnowszym wydaniu…",
+        releaseLine: "Najnowsze wydanie: {tag} · {date}",
+        releaseFallback: "Linki prowadzą do strony wydań na GitHubie.",
+        howToTitle: "Jak to działa?",
+        step1Title: "Uruchom Triviacon",
+        step1Body: "Panel kontrolny otwiera się automatycznie.",
+        step2Title: "Przygotuj quiz",
+        step2Body: "Stwórz nowy plik lub otwórz istniejący. Dodaj kategorie, pytania i opcjonalne media w zakładce Kreator.",
+        step3Title: "Dodaj drużyny",
+        step3Body: "Wpisz nazwy drużyn w zakładce Rozgrywka przed rozpoczęciem gry.",
+        step4Title: "Otwórz ekran gry",
+        step4Body: "Kliknij ikonę monitora na pasku narzędzi i skieruj projektor lub drugi ekran na to okno.",
+        step5Title: "Prowadź quiz",
+        step5Body: "Nawiguj po pytaniach z panelu kontrolnego, odkrywaj odpowiedzi i śledź punktację na żywo.",
+        osTitle: "Open source",
+        osBody: "Triviacon jest darmowy i otwartoźródłowy.<br>Znalazłeś błąd albo masz pomysł na ulepszenie?",
+        reportIssue: "Zgłoś problem",
+        license: "licencja MIT"
+      },
+      en: {
+        pageTitle: "Triviacon — Portable live trivia quiz host",
+        pageDescription: "Triviacon is a free, portable desktop app for running trivia quiz nights. For Windows, Linux, and macOS.",
+        tagline: "Portable live trivia quiz host",
+        newIn: "New in",
+        newInFeature: "— two-step question selection",
+        ctaDownload: "Download the latest version",
+        aboutTitle: "What is Triviacon?",
+        aboutBody: "Triviacon is a free desktop app for trivia quiz hosts. The host runs the game from a control panel while contestants follow along on a separate game screen — perfect for projectors and second displays.",
+        feature1: "Build quizzes with categories, questions, and multiple-choice answers",
+        feature2: "Attach media — images, audio, video — directly to questions",
+        feature3: "Manage teams and live scoring in real time",
+        feature4: "Quiz files (<code>.tcq</code>) — self-contained archives, easy to share",
+        feature5: "Interface available in Polish and English",
+        feature6: "Fully portable — no installation, runs from a USB stick",
+        downloadTitle: "Download",
+        downloadNote: "No installation required. Extract and run.",
+        winHint: "Extract the ZIP archive,<br>run <code>triviacon.exe</code>",
+        linuxHint: "Make it executable,<br>run the <code>.AppImage</code> file",
+        macHint: "Extract the ZIP archive,<br>run <code>Triviacon.app</code>",
+        downloadFor: "Download for",
+        loadingRelease: "Fetching latest release info…",
+        releaseLine: "Latest release: {tag} · {date}",
+        releaseFallback: "Links go to the GitHub releases page.",
+        howToTitle: "How it works",
+        step1Title: "Launch Triviacon",
+        step1Body: "The control panel opens automatically.",
+        step2Title: "Prepare a quiz",
+        step2Body: "Create a new quiz file or open an existing one. Add categories, questions, and optional media in the Builder tab.",
+        step3Title: "Add teams",
+        step3Body: "Enter team names in the Runner tab before the game starts.",
+        step4Title: "Open the game screen",
+        step4Body: "Click the monitor icon in the toolbar; point a projector or second display at this window.",
+        step5Title: "Run the quiz",
+        step5Body: "Navigate questions from the control panel, reveal answers, and track scores live.",
+        osTitle: "Open source",
+        osBody: "Triviacon is free and open source.<br>Found a bug or have an idea?",
+        reportIssue: "Report an issue",
+        license: "MIT license"
+      }
+    }
+
+    // ── Language switching ────────────────────────────────────────
+    function applyLang(lang) {
+      const dict = STRINGS[lang] || STRINGS.pl
+      document.documentElement.lang = lang
+      // Document head
+      if (dict.pageTitle) document.title = dict.pageTitle
+      const descEl = document.querySelector('meta[name="description"]')
+      if (descEl && dict.pageDescription) descEl.setAttribute('content', dict.pageDescription)
+      // Body content
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n')
+        const value = dict[key]
+        if (value === undefined) return
+        if (el.hasAttribute('data-i18n-html')) {
+          el.innerHTML = value
+        } else {
+          el.textContent = value
+        }
+      })
+      document.querySelectorAll('[data-lang-set]').forEach((btn) => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-lang-set') === lang)
+      })
+      // Always re-render the release-meta line so the fallback text
+      // (when the GitHub API fetch fails or hasn't returned yet) tracks
+      // the current language too.
+      renderReleaseMeta(releaseInfo, lang)
+    }
+
+    let releaseInfo = null
+    let releaseState = 'loading' // 'loading' | 'loaded' | 'failed'
+    function getLang() {
+      return document.documentElement.lang === 'en' ? 'en' : 'pl'
+    }
+
+    document.querySelectorAll('[data-lang-set]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const lang = btn.getAttribute('data-lang-set')
+        try { localStorage.setItem('triviacon-lang', lang) } catch (_) {}
+        applyLang(lang)
+      })
+    })
+
+    // Initial language: localStorage > browser > pl
+    let initialLang = 'pl'
+    try {
+      const stored = localStorage.getItem('triviacon-lang')
+      if (stored === 'pl' || stored === 'en') initialLang = stored
+      else if (navigator.language && navigator.language.toLowerCase().startsWith('en')) initialLang = 'en'
+    } catch (_) {}
+    applyLang(initialLang)
+
+    // ── Footer year ───────────────────────────────────────────────
+    const yearEl = document.querySelector('[data-year]')
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear())
+
+    // ── Latest release fetch & deep links ─────────────────────────
+    function renderReleaseMeta(info, lang) {
+      const dict = STRINGS[lang] || STRINGS.pl
+      const meta = document.querySelector('[data-release-meta]')
+      if (!meta) return
+      if (releaseState === 'loading') {
+        meta.innerHTML = `<span>${dict.loadingRelease}</span>`
+        return
+      }
+      if (releaseState === 'failed' || !info) {
+        meta.innerHTML = `<span>${dict.releaseFallback}</span>`
+        return
+      }
+      const date = new Date(info.published_at).toLocaleDateString(
+        lang === 'pl' ? 'pl-PL' : 'en-US',
+        { year: 'numeric', month: 'long', day: 'numeric' }
+      )
+      const line = dict.releaseLine.replace('{tag}', info.tag_name).replace('{date}', date)
+      meta.innerHTML = `<a href="${info.html_url}" target="_blank" rel="noopener">${line}</a>`
+    }
+
+    function rewireDownloadLinks(info) {
+      if (!info || !Array.isArray(info.assets)) return
+      document.querySelectorAll('[data-asset-pattern]').forEach((link) => {
+        const pattern = link.getAttribute('data-asset-pattern')
+        const exclude = link.getAttribute('data-asset-exclude')
+        const match = info.assets.find((a) => {
+          if (!a.name.includes(pattern)) return false
+          if (exclude && a.name.includes(exclude)) return false
+          return true
+        })
+        if (match) link.href = match.browser_download_url
+      })
+      // Update the version chip
+      const tagEl = document.querySelector('[data-version-tag]')
+      if (tagEl && info.tag_name) tagEl.textContent = info.tag_name
+    }
+
+    fetch('https://api.github.com/repos/TriviaCon/triviacon/releases/latest', {
+      headers: { Accept: 'application/vnd.github+json' }
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((info) => {
+        if (info) {
+          releaseInfo = info
+          releaseState = 'loaded'
+          rewireDownloadLinks(info)
+        } else {
+          releaseState = 'failed'
+        }
+        renderReleaseMeta(releaseInfo, getLang())
+      })
+      .catch(() => {
+        releaseState = 'failed'
+        renderReleaseMeta(null, getLang())
+      })
+  </script>
 
 </body>
 </html>
